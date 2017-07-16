@@ -3,7 +3,8 @@ package com.yjchoi.jsontest;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -16,14 +17,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
-    // Will show the string "data" that holds the results
-    TextView results;
-    // URL of object to be parsed
+    // Json Data URL
     String JsonURL = "https://rawgit.com/the1994/todaktodak/master/pet.json";
-    // This string will hold the results
-    String data = "";
     // Defining the Volley request queue that handles the URL request concurrently
     RequestQueue requestQueue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         requestQueue = Volley.newRequestQueue(this);
 
         // Casts results into the TextView found within the main layout XML with id jsonData
-        results = (TextView) findViewById(R.id.jsonData);
+        final ListView list = (ListView) findViewById(R.id.listView1);
 
         // Creating the JsonArrayRequest class called arrayreq, passing the required parameters
         //JsonURL is the URL to be fetched from
@@ -52,28 +50,35 @@ public class MainActivity extends AppCompatActivity {
                             JSONArray hospitalArry = hospitalObj.getJSONArray("petHospital");
                             // Iterates through the JSON Array getting objects and adding them
                             //to the list view until there are no more objects in hospitalArray
+
+                            String[] petHospital = new String[hospitalArry.length()];
+
                             for (int i = 0; i < hospitalArry.length(); i++) {
                                 //gets each JSON object within the JSON array
                                 JSONObject jsonObject = hospitalArry.getJSONObject(i);
 
-                                // Retrieves the string labeled "colorName" and "hexValue",
-                                // and converts them into javascript objects
+                                // "name", "location", "phone"이라는 이름 받아오고
+                                // 객체로 만든다
                                 String name = jsonObject.getString("name");
                                 String location = jsonObject.getString("location");
                                 String phone = jsonObject.getString("phone");
 
-                                // Adds strings from the current object to the data string
-                                //spacing is included at the end to separate the results from
-                                //one another
-                                data += "Number " + (i + 1) + "\n" + "Hospital Name: " + name + "\n" +
-                                        "location: " + location + "\n" + "phone: " + phone + "\n\n";
+                                // 각각 합쳐서 hospital String에 저장
+                                String hospital = "Number " + (i + 1) + "\n" + "Hospital Name: " + name + "\n" +
+                                        "location: " + location + "\n" + "phone: " + phone;
+
+                                // 합친 String을 배열에 넣는다.
+                                petHospital[i] = hospital;
+
+                                Log.v("test", petHospital[i]);
                             }
-                            // Adds the data string to the TextView "results"
-                            results.setText(data);
+                            // listView에 표시하기
+                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, petHospital);
+                            list.setAdapter(adapter);
                         }
-                        // Try and catch are included to handle any errors due to JSON
+                        // JSON 에러
                         catch (JSONException e) {
-                            // If an error occurs, this prints the error to the log
+                            // 에러 발생하면, 로그에 출력
                             e.printStackTrace();
                         }
                     }
