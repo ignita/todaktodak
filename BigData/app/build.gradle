@@ -27,4 +27,7 @@ dependencies {
     //    Google Play Services 라이브러리
     compile 'com.google.android.gms:play-services-maps:11.0.2'
     compile 'com.google.android.gms:play-services-location:11.0.2'
+
+    // Volley 라이브러리
+    compile 'com.mcxiaoke.volley:library:1.0.19'
 }
