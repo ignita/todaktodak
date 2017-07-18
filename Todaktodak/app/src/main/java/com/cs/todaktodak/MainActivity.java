@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(1).setCustomView(tabTwo);
 
         TextView tabThree = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        tabThree.setText("THREE");
+        tabThree.setText("목록");
         tabThree.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_list,0,0);
         tabLayout.getTabAt(2).setCustomView(tabThree);
     }
