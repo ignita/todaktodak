@@ -69,10 +69,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private static final int UPDATE_INTERVAL_MS = 3000;  // 1초
     private static final int FASTEST_UPDATE_INTERVAL_MS = 3000; // 1초
 
-    private Fragment mFragment;
+    //private Fragment mFragment;
     //boolean dialog = false;
     boolean askPermissionOnceAgain = false;
-    AlertDialog.Builder builder = null;
+    //AlertDialog.Builder builder = null;
 
 
     // 기준 위치
@@ -98,7 +98,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
             currentMarker = this.mGoogleMap.addMarker(markerOptions);
 
-            this.mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+            this.mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation,15));
             return;
         }
 
@@ -128,15 +128,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mapView.onStart();
     }
 
-    @Override
-    public void onStop() {
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
-
-        super.onStop();
-        mapView.onStop();
-    }
+//    @Override
+//    public void onStop() {
+//        Log.d(TAG, "onStop");
+//        super.onStop();
+//        mapView.onStop();
+//        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+//            mGoogleApiClient.disconnect();
+//        }
+//    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -158,22 +158,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         if (askPermissionOnceAgain) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 askPermissionOnceAgain = false;
-                Toast.makeText(getActivity(),"false로변경",Toast.LENGTH_SHORT).show();
                 checkPermissions();
             }
         }
     }
 
-    @Override
-    public void onPause() {
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-            mGoogleApiClient.disconnect();
-        }
-
-        super.onPause();
-        mapView.onPause();
-    }
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        mapView.onPause();
+//        Log.d(TAG, "onPause");
+//        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+//            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+//            mGoogleApiClient.disconnect();
+//        }
+//    }
 
     @Override
     public void onLowMemory() {
@@ -181,22 +180,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mapView.onLowMemory();
     }
 
-    @Override
-    public void onDestroy() {
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.unregisterConnectionCallbacks(this);
-            mGoogleApiClient.unregisterConnectionFailedListener(this);
-
-            if (mGoogleApiClient.isConnected()) {
-                LocationServices.FusedLocationApi
-                        .removeLocationUpdates(mGoogleApiClient, this);
-                mGoogleApiClient.disconnect();
-            }
-        }
-
-        super.onDestroy();
-        mapView.onLowMemory();
-    }
+//    @Override
+//    public void onDestroy() {
+//        if (mGoogleApiClient != null) {
+//            mGoogleApiClient.unregisterConnectionCallbacks(this);
+//            mGoogleApiClient.unregisterConnectionFailedListener(this);
+//
+//            if (mGoogleApiClient.isConnected()) {
+//                LocationServices.FusedLocationApi
+//                        .removeLocationUpdates(mGoogleApiClient, this);
+//                mGoogleApiClient.disconnect();
+//            }
+//        }
+//
+//        super.onDestroy();
+//        mapView.onLowMemory();
+//    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -220,6 +219,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mGoogleMap.getUiSettings().setCompassEnabled(true);
         //mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             //API 23 이상이면 런타임 퍼미션 처리 필요
             int hasFineLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
@@ -273,7 +273,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-       // mGoogleApiClient.connect();
+        //mGoogleApiClient.connect();
 //        if(dialog == false) {
 //
 //            dialog = true;
@@ -444,7 +444,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     private void showDialogForLocationServiceSetting() {
         Toast.makeText(getActivity(),"다이얼로그",Toast.LENGTH_SHORT).show();
-        builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("위치 서비스 비활성화");
         builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n"
                 + "위치 설정을 수정하실래요?" );
