@@ -1,12 +1,16 @@
 package com.cs.todaktodak;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -20,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -32,11 +37,16 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by yjchoi on 2017. 7. 17..
@@ -47,25 +57,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
+    private GoogleApiClient mGoogleApiClient = null;
+    private GoogleMap mGoogleMap = null;
+    private MapView mapView = null;
+    private Marker currentMarker = null;
+
     private static final LatLng DEFAULT_LOCATION = new LatLng(35.154046, 129.032505);
     private static final String TAG = "googlemap_example";
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 2002;
-    private static final int UPDATE_INTERVAL_MS = 15000;
-    private static final int FASTEST_UPDATE_INTERVAL_MS = 15000;
+    private static final int UPDATE_INTERVAL_MS = 3000;  // 1초
+    private static final int FASTEST_UPDATE_INTERVAL_MS = 3000; // 1초
+
+    private Fragment mFragment;
+    //boolean dialog = false;
+    boolean askPermissionOnceAgain = false;
+    AlertDialog.Builder builder = null;
+
 
     // 기준 위치
     //static final LatLng SEOUL = new LatLng(37.527089, 127.028480);
-    private GoogleMap googleMap = null;
-    private MapView mapView = null;
-    private GoogleApiClient googleApiClient = null;
-    private Marker currentMarker = null;
-
-    private final static int MAXENTRIES = 5;
-    private String[] LikelyPlaceNames = null;
-    private String[] LikelyAddresses = null;
-    private String[] LikelyAttributions = null;
-    private LatLng[] LikelyLatLngs = null;
 
     public MapFragment() { }
 
@@ -85,9 +96,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             markerOptions.snippet(markerSnippet);
             markerOptions.draggable(true);
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-            currentMarker = this.googleMap.addMarker(markerOptions);
+            currentMarker = this.mGoogleMap.addMarker(markerOptions);
 
-            this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+            this.mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
             return;
         }
 
@@ -97,8 +108,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         markerOptions.snippet(markerSnippet);
         markerOptions.draggable(true);
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        currentMarker = this.googleMap.addMarker(markerOptions);
-        this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_LOCATION));
+        currentMarker = this.mGoogleMap.addMarker(markerOptions);
+        this.mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_LOCATION));
     }
 
     @Override
@@ -107,23 +118,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
         mapView = (MapView) layout.findViewById(R.id.map);
         mapView.getMapAsync(this);
-
-//        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-//                getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-//        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(Place place) {
-//                Location location = new Location("");
-//                location.setLatitude(place.getLatLng().latitude);
-//                location.setLongitude(place.getLatLng().longitude);
-//                setCurrentLocation(location, place.getName().toString(), place.getAddress().toString());
-//            }
-//
-//            @Override
-//            public void onError(Status status) {
-//                Log.i(TAG, "An error occurred: " + status);
-//            }
-//        });
 
         return layout;
     }
@@ -136,6 +130,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onStop() {
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+
         super.onStop();
         mapView.onStop();
     }
@@ -150,10 +148,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public void onResume() {
         super.onResume();
         mapView.onResume();
+        Log.d(TAG, "onResume");
+
+        if (mGoogleApiClient!=null){
+                mGoogleApiClient.connect();
+        }
+
+        //앱 정보에서 퍼미션을 허가했는지를 다시 검사해봐야 한다.
+        if (askPermissionOnceAgain) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                askPermissionOnceAgain = false;
+                Toast.makeText(getActivity(),"false로변경",Toast.LENGTH_SHORT).show();
+                checkPermissions();
+            }
+        }
     }
 
     @Override
     public void onPause() {
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
+        }
+
         super.onPause();
         mapView.onPause();
     }
@@ -166,113 +183,109 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-        mapView.onLowMemory();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.unregisterConnectionCallbacks(this);
+            mGoogleApiClient.unregisterConnectionFailedListener(this);
 
-        if ( googleApiClient != null ) {
-            googleApiClient.unregisterConnectionCallbacks(this);
-            googleApiClient.unregisterConnectionFailedListener(this);
-            if ( googleApiClient.isConnected()) {
-                LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
-                googleApiClient.disconnect();
+            if (mGoogleApiClient.isConnected()) {
+                LocationServices.FusedLocationApi
+                        .removeLocationUpdates(mGoogleApiClient, this);
+                mGoogleApiClient.disconnect();
             }
         }
+
+        super.onDestroy();
+        mapView.onLowMemory();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         //액티비티가 처음 생성될 때 실행되는 함수
+        MapsInitializer.initialize(getActivity().getApplicationContext());
+
         if (mapView != null) {
             mapView.onCreate(savedInstanceState);
         }
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(GoogleMap map) {
+        Log.d(TAG, "onMapReady");
+        mGoogleMap = map;
+        //런타임 퍼미션 요청 대화상자나 GPS 활성 요청 대화상자 보이기전에
+        //지도의 초기위치를 동의대역으로 이동
+        setCurrentLocation(null, "위치정보 가져올 수 없음", "위치 퍼미션과 GPS 활성 요부 확인하세요");
 
-        this.googleMap = googleMap;
-
-        // 마커
-//        googleMap.addMarker(new MarkerOptions().position(SEOUL).title("Seoul"));
-//        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(SEOUL, 17.0f));
-        //런타임 퍼미션 요청 대화상자나 GPS 활성 요청 대화상자 보이기전에 지도의 초기위치를 서울로 이동
-
-        setCurrentLocation(null, "위치정보 가져올 수 없음", "위치 퍼미션과 GPS 활성 여부 확인");
-        //나침반이 나타나도록 설정
-        googleMap.getUiSettings().setCompassEnabled(true);
-        // 매끄럽게 이동함
-        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-        //  API 23 이상이면 런타임 퍼미션 처리 필요
+        mGoogleMap.getUiSettings().setCompassEnabled(true);
+        //mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // 사용권한체크
+            //API 23 이상이면 런타임 퍼미션 처리 필요
             int hasFineLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
-            if ( hasFineLocationPermission == PackageManager.PERMISSION_DENIED) {
-                //사용권한이 없을경우
-                //권한 재요청
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-            } else {
-                //사용권한이 있는경우
-                if ( googleApiClient == null) {
+
+            if (hasFineLocationPermission == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions( getActivity(),
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+                if (mGoogleApiClient == null) {
                     buildGoogleApiClient();
                 }
-
-                if ( ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-                {
-                    googleMap.setMyLocationEnabled(true);
+            } else {
+                if (mGoogleApiClient == null) {
+                    buildGoogleApiClient();
+                }
+                if (ActivityCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    mGoogleMap.setMyLocationEnabled(true);
                 }
             }
         } else {
-            if ( googleApiClient == null) {
+            if (mGoogleApiClient == null) {
                 buildGoogleApiClient();
             }
-            googleMap.setMyLocationEnabled(true);
+            mGoogleMap.setMyLocationEnabled(true);
         }
     }
 
-    private void buildGoogleApiClient() {
-        googleApiClient = new GoogleApiClient.Builder(getActivity())
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode
+                == PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION && grantResults.length > 0) {
+            boolean permissionAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+            if (permissionAccepted) {
+                if (mGoogleApiClient == null) {
+                    buildGoogleApiClient();
+                }
+                if (ActivityCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    mGoogleMap.setMyLocationEnabled(true);
+                }
+            }
+            else {
+                checkPermissions();
+            }
+        }
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
-//                .addApi(Places.GEO_DATA_API)
-//                .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(getActivity(), this)
                 .build();
-
-        googleApiClient.connect();
-    }
-    public boolean checkLocationServicesStatus() {
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+       // mGoogleApiClient.connect();
+//        if(dialog == false) {
+//
+//            dialog = true;
+//            Toast.makeText(getActivity(),"connect2",Toast.LENGTH_SHORT).show();
+//        }
     }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if ( !checkLocationServicesStatus()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle("위치 서비스 비활성화");
-            builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n" +
-                    "위치 설정을 수정하십시오.");
-            builder.setCancelable(true);
-            builder.setPositiveButton("설정", new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    Intent callGPSSettingIntent =
-                            new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);
-                }
-            });
-
-            builder.setNegativeButton("취소", new DialogInterface.OnClickListener(){
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.cancel();
-                }
-            });
-            builder.create().show();
+        Log.d(TAG,"onConnected");
+        if (!checkLocationServicesStatus()) {
+            showDialogForLocationServiceSetting();
         }
 
         LocationRequest locationRequest = new LocationRequest();
@@ -280,17 +293,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         locationRequest.setInterval(UPDATE_INTERVAL_MS);
         locationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_MS);
 
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if ( ActivityCompat.checkSelfPermission(getActivity(),
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(getActivity(),
                     Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 LocationServices.FusedLocationApi
-                        .requestLocationUpdates(googleApiClient, locationRequest, this);
+                        .requestLocationUpdates(mGoogleApiClient, locationRequest, this);
+                mGoogleMap.getUiSettings().setCompassEnabled(true);
+                //mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+                mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
             }
-        } else {
+        }
+        else{
+            Log.d(TAG,"onConnected : call FusedLocationApi");
             LocationServices.FusedLocationApi
-                    .requestLocationUpdates(googleApiClient, locationRequest, this);
-            this.googleMap.getUiSettings().setCompassEnabled(true);
-            this.googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                    .requestLocationUpdates(mGoogleApiClient, locationRequest, this);
+            mGoogleMap.getUiSettings().setCompassEnabled(true);
+            //mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+            mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
         }
     }
 
@@ -307,50 +326,180 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Location location = new Location("");
+        Location location = null;
         location.setLatitude(DEFAULT_LOCATION.latitude);
-        location.setLongitude((DEFAULT_LOCATION.longitude));
-        setCurrentLocation(location, "위치정보 가져올 수 없음", "위치 퍼미션과 GPS활성 여부 확인");
+        location.setLongitude(DEFAULT_LOCATION.longitude);
+        setCurrentLocation(location, "위치정보 가져올 수 없음",
+                "위치 퍼미션과 GPS 활성 여부 확인하세요");
     }
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.i(TAG, "onLocationChanged call..");
-        //searchCurrentPlaces();
+        Log.d(TAG, "onLocationChanged");
+        String markerTitle = getCurrentAddress(location);
+        String markerSnippet = "위도:"+String.valueOf(location.getLatitude())
+                + " 경도:"+String.valueOf(location.getLongitude());
+        //현재 위치에 마커 생성
+        setCurrentLocation(location, markerTitle, markerSnippet );
+    }
+
+    //여기부터는 런타임 퍼미션 처리을 위한 메소드들
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermissions() {
+        //Log.d(TAG, "checkPermissions");
+        boolean fineLocationRationale = ActivityCompat
+                .shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+        int hasFineLocationPermission = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if (hasFineLocationPermission == PackageManager.PERMISSION_DENIED && fineLocationRationale )
+            showDialogForPermission("앱을 실행하려면 퍼미션을 허가하셔야합니다.");
+        else if (hasFineLocationPermission
+                == PackageManager.PERMISSION_DENIED && !fineLocationRationale ) {
+            showDialogForPermissionSetting("퍼미션 거부 + Don't ask again(다시 묻지 않음) " +
+                    "체크 박스를 설정한 경우로 설정에서 퍼미션 허가해야합니다.");
+        }
+        else if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED) {
+            if (mGoogleApiClient == null) {
+                buildGoogleApiClient();
+            }
+            mGoogleMap.setMyLocationEnabled(true);
+        }
     }
 
 
+    public String getCurrentAddress(Location location){
+        //지오코더... GPS를 주소로 변환
+        Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
+        List<Address> addresses;
+        try {
+            addresses = geocoder.getFromLocation(
+                    location.getLatitude(),
+                    location.getLongitude(),
+                    1);
+        } catch (IOException ioException) {
+            //네트워크 문제
+            Toast.makeText(getActivity(), "지오코더 서비스 사용불가", Toast.LENGTH_LONG).show();
+            return "지오코더 서비스 사용불가";
+        } catch (IllegalArgumentException illegalArgumentException) {
+            Toast.makeText(getActivity(), "잘못된 GPS 좌표", Toast.LENGTH_LONG).show();
+            return "잘못된 GPS 좌표";
+        }
+        if (addresses == null || addresses.size() == 0) {
+            Toast.makeText(getActivity(), "주소 미발견", Toast.LENGTH_LONG).show();
+            return "주소 미발견";
+        } else {
+            Address address = addresses.get(0);
+            return address.getAddressLine(0).toString();
+        }
+    }
 
-    private void searchCurrentPlaces() {
-        @SuppressWarnings("MissingPermission")
-//        PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi.getCurrentPlace(googleApiClient, null);
-//        result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>(){
-//            @Override
-//            public void onResult(@NonNull PlaceLikelihoodBuffer placeLikelihoods) {
-//                int i = 0;
-//                LikelyPlaceNames = new String[MAXENTRIES];
-//                LikelyAddresses = new String[MAXENTRIES];
-//                LikelyAttributions = new String[MAXENTRIES];
-//                LikelyLatLngs = new LatLng[MAXENTRIES];
-//
-//                for(PlaceLikelihood placeLikelihood : placeLikelihoods) {
-//                    LikelyPlaceNames[i] = (String) placeLikelihood.getPlace().getName();
-//                    LikelyAddresses[i] = (String) placeLikelihood.getPlace().getAddress();
-//                    LikelyAttributions[i] = (String) placeLikelihood.getPlace().getAttributions();
-//                    LikelyLatLngs[i] = placeLikelihood.getPlace().getLatLng();
-//
-//                    i++;
-//                    if(i > MAXENTRIES - 1 ) {
-//                        break;
-//                    }
-//                }
-//                placeLikelihoods.release();
-
-                Location location = new Location("");
-                location.setLatitude(LikelyLatLngs[0].latitude);
-                location.setLongitude(LikelyLatLngs[0].longitude);
-                setCurrentLocation(location, LikelyPlaceNames[0], LikelyAddresses[0]);
+    @TargetApi(Build.VERSION_CODES.M)
+    private void showDialogForPermission(String msg) {
+        Log.d(TAG, "showDialogForPermission");
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("알림");
+        builder.setMessage(msg);
+        builder.setCancelable(false);
+        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                ActivityCompat.requestPermissions( getActivity(),
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
             }
-//        });
-//    }
+        });
+
+        builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                //finish();
+            }
+        });
+        builder.create().show();
+    }
+
+    private void showDialogForPermissionSetting(String msg) {
+        Log.d(TAG, "showDialogForPermissionSetting");
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("알림");
+        builder.setMessage(msg);
+        builder.setCancelable(true);
+        builder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                askPermissionOnceAgain = true;
+                Intent myAppSettings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.parse("package:" + getActivity().getPackageName()));
+                myAppSettings.addCategory(Intent.CATEGORY_DEFAULT);
+                myAppSettings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getActivity().startActivity(myAppSettings);
+            }
+        });
+        builder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                //finish();
+            }
+        });
+        builder.create().show();
+    }
+
+    //여기부터는 GPS 활성화를 위한 메소드들
+
+    private void showDialogForLocationServiceSetting() {
+        Toast.makeText(getActivity(),"다이얼로그",Toast.LENGTH_SHORT).show();
+        builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("위치 서비스 비활성화");
+        builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n"
+                + "위치 설정을 수정하실래요?" );
+        builder.setCancelable(true);
+        builder.setPositiveButton("설정", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                Intent callGPSSettingIntent
+                        = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivityForResult(callGPSSettingIntent, GPS_ENABLE_REQUEST_CODE);
+            }
+        });
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id){
+                dialog.cancel();
+            }
+        });
+        builder.create().show();
+    }
+
+    public boolean checkLocationServicesStatus() {
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case GPS_ENABLE_REQUEST_CODE:
+                //사용자가 GPS 활성 시켰는지 검사
+                if (checkLocationServicesStatus()) {
+                    if (checkLocationServicesStatus()) {
+                        if (mGoogleApiClient == null) {
+                            buildGoogleApiClient();
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (ActivityCompat.checkSelfPermission(getActivity(),
+                                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                                mGoogleMap.setMyLocationEnabled(true);
+                            }
+                        }
+                        else  mGoogleMap.setMyLocationEnabled(true);
+                        return;
+                    }
+                }
+                else{
+                    setCurrentLocation(null, "위치정보 가져올 수 없음", "위치 퍼미션과 GPS 활성 요부 확인하세요");
+                }
+                break;
+        }
+    }
+
 }
+
+
