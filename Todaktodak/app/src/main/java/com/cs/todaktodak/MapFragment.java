@@ -245,6 +245,39 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             }
             mGoogleMap.setMyLocationEnabled(true);
         }
+
+        // 마커 추가 소스 for문 돌려서 넣기 (http://mailmail.tistory.com/20)
+        MarkerOptions marker = new MarkerOptions();
+        marker .position(new LatLng(37.555744, 126.970431))
+                .title("서울역")
+                .snippet("Seoul Station");
+        map.addMarker(marker).showInfoWindow(); // 마커추가,화면에출력
+
+        // 마커 클릭 이벤트
+//        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+//
+//            public boolean onMarkerClick(Marker marker) {
+//                String text = "[마커 클릭 이벤트] latitude ="
+//                        + marker.getPosition().latitude + ", longitude ="
+//                        + marker.getPosition().longitude;
+//                Toast.makeText(getActivity(), text, Toast.LENGTH_LONG)
+//                        .show();
+//                return false;
+//            }
+//        });
+
+        // 마커 정보 윈도우 이벤트
+        map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener(){
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity());
+                dlg.setTitle("Test");
+                dlg.setMessage("이곳이 내용입니다.");
+                dlg.setIcon(R.mipmap.ic_launcher);
+                dlg.show();
+                return ;
+            }
+        });
     }
 
     @Override
@@ -499,6 +532,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 break;
         }
     }
+
 
 }
 

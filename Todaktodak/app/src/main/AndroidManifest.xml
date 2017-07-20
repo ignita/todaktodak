@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.cs.todaktodak">
+    package="com.cs.todaktodak"
+    android:installLocation="preferExternal">
 
     <uses-feature android:required="true" android:glEsVersion="0x00020000"/>
     <permission android:name="com.cs.todaktodak.permission.MAPS_RECEIVE" android:label="signature"></permission>
