@@ -2,12 +2,15 @@ package com.cs.todaktodak;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -19,6 +22,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by yjchoi on 2017. 7. 17..
  */
@@ -29,6 +35,7 @@ public class ThreeFragment extends Fragment{
     String JsonURL = "https://rawgit.com/the1994/todaktodak/master/pet.json";
     // Defining the Volley request queue that handles the URL request concurrently
     RequestQueue requestQueue;
+    View dialogView, dialogView_title;
 
 
     public ThreeFragment() { }
@@ -62,13 +69,15 @@ public class ThreeFragment extends Fragment{
                             // Retrieves first JSON object in outer array
                             JSONObject hospitalObj = response.getJSONObject(0);
                             // Retrieves "petHospital" from the JSON object
-                            JSONArray hospitalArry = hospitalObj.getJSONArray("petHospital");
+                            final JSONArray hospitalArry = hospitalObj.getJSONArray("petHospital");
                             // Iterates through the JSON Array getting objects and adding them
                             //to the list view until there are no more objects in hospitalArray
 
                             String[] petHospital = new String[hospitalArry.length()];
 
-                            String[] hospitalName = new String[hospitalArry.length()];
+                            final String[] hospitalName = new String[hospitalArry.length()];
+                            final String[] hospitalLocation = new String[hospitalArry.length()];
+                            final String[] hospitalPhone = new String[hospitalArry.length()];
 
 
                             for (int i = 0; i < hospitalArry.length(); i++) {
@@ -90,13 +99,49 @@ public class ThreeFragment extends Fragment{
 
                                 // 병원 이름
                                 hospitalName[i] = name;
+                                hospitalLocation[i] = location;
+                                hospitalPhone[i] = phone;
                                 // Log.v("name: ", hospitalName[i]);
 
-                                // Log.v("test", petHospital[i]);
+                                //Log.v("test", petHospital[i]);
                             }
                             // listView에 표시하기
-                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, hospitalName);
+                            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, hospitalName);
                             list.setAdapter(adapter);
+
+
+                            list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                    String shospitalName = hospitalName[i];
+                                    String shospitalLocation = hospitalLocation[i];
+                                    String shospitalPhone = hospitalPhone[i];
+
+                                    final List<String> values = new ArrayList<String>();
+                                    values.add("병원명 : " + shospitalName);
+                                    values.add("주소 : " + shospitalLocation);
+                                    if (shospitalPhone.equals("null")) {
+                                        Toast.makeText(getActivity(), "true", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else {
+                                        values.add("전화번호 : " + hospitalPhone[i]);
+                                        Toast.makeText(getActivity(), "false", Toast.LENGTH_SHORT).show();
+                                    }
+//                                    final String[] mid = {hospitalName[i]};
+//                                    ListView list1 = (ListView) view.findViewById(R.id.list_info);
+//                                    final ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, mid);
+//                                    list1.setAdapter(adapter1);
+                                    final CharSequence[] value = values.toArray(new String[values.size()]);
+                                    dialogView = (View) View.inflate(getActivity(), R.layout.custom_dialog, null);
+                                    dialogView_title = (View) View.inflate(getActivity(), R.layout.custom_dialog_title,null);
+                                    AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity());
+                                    dlg.setTitle("병원정보");
+                                    dlg.setItems(value, null);
+                                    dlg.setCustomTitle(dialogView_title);
+                                    dlg.setView(dialogView);
+                                    dlg.show();
+                                }
+                            });
                         }
                         // JSON 에러
                         catch (JSONException e) {
@@ -120,4 +165,5 @@ public class ThreeFragment extends Fragment{
 
         return view;
     }
+
 }
