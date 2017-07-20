@@ -22,11 +22,11 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private int[] tabIcons = {
-            R.drawable.ic_map,
-            R.drawable.ic_tel,
-            R.drawable.ic_list
-    };
+//    private int[] tabIcons = {
+//            R.drawable.ic_map,
+//            R.drawable.ic_tel,
+//            R.drawable.ic_list
+//    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
