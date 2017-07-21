@@ -1,5 +1,7 @@
 package com.cs.todaktodak;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -115,23 +118,24 @@ public class ThreeFragment extends Fragment{
                                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                                     String shospitalName = hospitalName[i];
                                     String shospitalLocation = hospitalLocation[i];
-                                    String shospitalPhone = hospitalPhone[i];
+                                    final String shospitalPhone = hospitalPhone[i];
 
                                     final List<String> values = new ArrayList<String>();
                                     values.add("병원명 : " + shospitalName);
                                     values.add("주소 : " + shospitalLocation);
                                     if (shospitalPhone.equals("null")) {
-                                        Toast.makeText(getActivity(), "true", Toast.LENGTH_SHORT).show();
                                     }
                                     else {
                                         values.add("전화번호 : " + hospitalPhone[i]);
-                                        Toast.makeText(getActivity(), "false", Toast.LENGTH_SHORT).show();
                                     }
 //                                    final String[] mid = {hospitalName[i]};
 //                                    ListView list1 = (ListView) view.findViewById(R.id.list_info);
 //                                    final ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, mid);
 //                                    list1.setAdapter(adapter1);
+
                                     final CharSequence[] value = values.toArray(new String[values.size()]);
+                                    //ImageButton img_phone = (ImageButton) view.findViewById(R.id.phone);
+
                                     dialogView = (View) View.inflate(getActivity(), R.layout.custom_dialog, null);
                                     dialogView_title = (View) View.inflate(getActivity(), R.layout.custom_dialog_title,null);
                                     AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity());
@@ -140,6 +144,24 @@ public class ThreeFragment extends Fragment{
                                     dlg.setCustomTitle(dialogView_title);
                                     dlg.setView(dialogView);
                                     dlg.show();
+                                    //final AlertDialog dialog = dlg.create();
+                                    ImageButton img_phone = (ImageButton) dialogView.findViewById(R.id.phone);
+                                    ImageButton img_map = (ImageButton) dialogView.findViewById(R.id.map);
+
+                                    img_phone.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Uri uri = Uri.parse("tel:"+shospitalPhone);
+                                            Intent intent = new Intent(Intent.ACTION_DIAL, uri);
+                                            startActivity(intent);
+                                        }
+                                    });
+                                    img_map.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            Toast.makeText(getActivity(), "지도보기", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
                             });
                         }
