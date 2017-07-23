@@ -9,15 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.SimpleExpandableListAdapter;
-import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -34,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.List;
 
 /**
  * Created by yjchoi on 2017. 7. 17..
@@ -89,7 +83,6 @@ public class ThreeFragment extends Fragment {
                             //to the list view until there are no more objects in hospitalArray
 
                             // String[] petHospital = new String[hospitalArry.length()];
-
                             final String[] hospitalName = new String[hospitalArry.length()];
                             final String[] hospitalLocation = new String[hospitalArry.length()];
                             final String[] hospitalPhone = new String[hospitalArry.length()];
@@ -159,8 +152,6 @@ public class ThreeFragment extends Fragment {
                                 hospitalLocation[i] = location;
                                 hospitalPhone[i] = phone;
                                 // Log.v("name: ", hospitalName[i]);
-
-                                //Log.v("test", petHospital[i]);
                             }
 
                             List<Map<String, String>> provData = new ArrayList<>();
