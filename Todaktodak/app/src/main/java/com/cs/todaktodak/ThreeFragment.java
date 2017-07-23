@@ -43,7 +43,7 @@ public class ThreeFragment extends Fragment {
     View dialogView, dialogView_title;
 
     ArrayList<ArrayList<String>> hospitalAddress = null;
-    final String[] arrProv = new String[]{"남구", "북구", "사상구", "사하구", "서구", "연제구", "중구", "영도구"};
+    final String[] arrProv = new String[]{"남구", "북구", "사상구", "사하구", "서구", "연제구", "영도구", "중구"};
 
 
     public ThreeFragment() {
@@ -133,10 +133,10 @@ public class ThreeFragment extends Fragment {
                                     seo.add(name);
                                 } else if (location.contains("연제구")) {
                                     yeonje.add(name);
+                                } else if (location.contains("영도구")) {
+                                    yeongdo.add(name);
                                 } else if (location.contains("중구")) {
                                     jung.add(name);
-                                } else if(location.contains("영도구")){
-                                    yeongdo.add(name);
                                 }
                                 // 병원 이름
                                 hospitalName[i] = name;
@@ -151,8 +151,8 @@ public class ThreeFragment extends Fragment {
                             hospitalAddress.add(ha);
                             hospitalAddress.add(seo);
                             hospitalAddress.add(yeonje);
-                            hospitalAddress.add(jung);
                             hospitalAddress.add(yeongdo);
+                            hospitalAddress.add(jung);
 
                             List<Map<String, String>> provData = new ArrayList<>();
                             List<List<Map<String, String>>> cityData = new ArrayList<>();
@@ -182,17 +182,26 @@ public class ThreeFragment extends Fragment {
                             list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
                                 @Override
                                 public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
-                                    
-                                    String shospitalName = hospitalName[i1];
-                                    String shospitalLocation = hospitalLocation[i1];
-                                    final String shospitalPhone = hospitalPhone[i1];
+
+                                    int num = i;
+                                    int sum = 0;
+
+                                    while (num > 0) {
+                                        sum += hospitalAddress.get(num - 1).size();
+                                        num--;
+                                    }
+                                    Log.i("sum", Integer.toString(sum));
+
+                                    String shospitalName = hospitalName[sum + i1];
+                                    String shospitalLocation = hospitalLocation[sum + i1];
+                                    final String shospitalPhone = hospitalPhone[sum + i1];
 
                                     final List<String> values = new ArrayList<String>();
                                     values.add("병원명 : " + shospitalName);
                                     values.add("주소 : " + shospitalLocation);
                                     if (shospitalPhone.equals("null")) {
                                     } else {
-                                        values.add("전화번호 : " + hospitalPhone[i1]);
+                                        values.add("전화번호 : " + hospitalPhone[sum + i1]);
                                     }
 
 //                                    final String[] mid = {hospitalName[i]};
@@ -233,6 +242,8 @@ public class ThreeFragment extends Fragment {
                                     return false;
                                 }
                             });
+
+
                         }
                         // JSON 에러
                         catch (
