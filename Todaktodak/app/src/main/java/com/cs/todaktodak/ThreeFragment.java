@@ -59,7 +59,7 @@ public class ThreeFragment extends Fragment {
         // Creates the Volley request queue
         requestQueue = Volley.newRequestQueue(getActivity());
 
-
+        ArrayList<ArrayList<String>> hospitalAddress = null;
         final String[] arrProv = new String[]{"남구", "북구", "사상구", "사하구", "서구", "연제구", "중구", "영도구"};
 
         final ExpandableListView list = (ExpandableListView) view.findViewById(R.id.list_item);
@@ -87,17 +87,16 @@ public class ThreeFragment extends Fragment {
                             final String[] hospitalLocation = new String[hospitalArry.length()];
                             final String[] hospitalPhone = new String[hospitalArry.length()];
 
-                            // 구 변수
-                            int nam = 0;
-                            int buk = 0;
-                            int sang = 0;
-                            int ha = 0;
-                            int seo = 0;
-                            int yeonje = 0;
-                            int jung = 0;
-                            int yeongdo = 0;
+                            hospitalAddress = new ArrayList<ArrayList<String>>();
+                            ArrayList<String> nam = new ArrayList<>();
+                            ArrayList<String> buk = new ArrayList<>();
+                            ArrayList<String> sang = new ArrayList<>();
+                            ArrayList<String> ha = new ArrayList<>();
+                            ArrayList<String> seo = new ArrayList<>();
+                            ArrayList<String> yeonje = new ArrayList<>();
+                            ArrayList<String> jung = new ArrayList<>();
+                            ArrayList<String> yeongdo = new ArrayList<>();
 
-                            final String[][] hospitalAddress = new String[8][20];
 
                             for (int i = 0; i < hospitalArry.length(); i++) {
                                 //gets each JSON object within the JSON array
@@ -123,29 +122,21 @@ public class ThreeFragment extends Fragment {
 
 
                                 if (location.contains("남구")) {
-                                    hospitalAddress[0][nam] = name;
-                                    nam++;
+                                    nam.add(name);
                                 } else if (location.contains("북구")) {
-                                    hospitalAddress[1][buk] = name;
-                                    buk++;
+                                    buk.add(name);
                                 } else if (location.contains("사상구")) {
-                                    hospitalAddress[2][sang] = name;
-                                    sang++;
+                                    sang.add(name);
                                 } else if (location.contains("사하구")) {
-                                    hospitalAddress[3][ha] = name;
-                                    ha++;
+                                    ha.add(name);
                                 } else if (location.contains("서구")) {
-                                    hospitalAddress[4][seo] = name;
-                                    seo++;
+                                    seo.add(name);
                                 } else if (location.contains("연제구")) {
-                                    hospitalAddress[5][yeonje] = name;
-                                    yeonje++;
+                                    yeonje.add(name);
                                 } else if (location.contains("중구")) {
-                                    hospitalAddress[6][jung] = name;
-                                    jung++;
-                                } else {
-                                    hospitalAddress[7][yeongdo] = hospitalName[i];
-                                    yeongdo++;
+                                    jung.add(name);
+                                } else if(location.contains("영도구")){
+                                    yeongdo.add(name);
                                 }
                                 // 병원 이름
                                 hospitalName[i] = name;
@@ -153,6 +144,15 @@ public class ThreeFragment extends Fragment {
                                 hospitalPhone[i] = phone;
                                 // Log.v("name: ", hospitalName[i]);
                             }
+
+                            hospitalAddress.add(nam);
+                            hospitalAddress.add(buk);
+                            hospitalAddress.add(sang);
+                            hospitalAddress.add(ha);
+                            hospitalAddress.add(seo);
+                            hospitalAddress.add(yeonje);
+                            hospitalAddress.add(jung);
+                            hospitalAddress.add(yeongdo);
 
                             List<Map<String, String>> provData = new ArrayList<>();
                             List<List<Map<String, String>>> cityData = new ArrayList<>();
@@ -163,9 +163,9 @@ public class ThreeFragment extends Fragment {
                                 provData.add(prov);
 
                                 List<Map<String, String>> cityes = new ArrayList<>();
-                                for (int j = 0; j < hospitalAddress[i].length; j++) {
+                                for (int j = 0; j < hospitalAddress.get(i).size(); j++) {
                                     Map<String, String> city = new HashMap<>();
-                                    city.put("city", hospitalAddress[i][j]);
+                                    city.put("city", hospitalAddress.get(i).get(j));
                                     cityes.add(city);
                                 }
                                 cityData.add(cityes);
