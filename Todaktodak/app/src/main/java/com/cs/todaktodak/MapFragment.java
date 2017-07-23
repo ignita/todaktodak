@@ -87,8 +87,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     boolean askPermissionOnceAgain = false;
     //AlertDialog.Builder builder = null;
 
+
     //public static String addressUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=";
     public static String addressUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=";
+
+    private String[] LikelyPlaceNames = null;
+    private String[] LikelyAddresses = null;
+    private String[] LikelyAttributions = null;
+    private LatLng[] LikelyLatLngs = null;
 
 
     String hospitalAddress[];
@@ -194,11 +200,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public void onPause() {
         super.onPause();
         mapView.onPause();
+
         Log.d(TAG, "onPause");
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
         }
+//        Log.d(TAG, "onPause");
+//        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+//            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+//            mGoogleApiClient.disconnect();
+//        }
     }
 
     @Override
@@ -207,22 +219,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mapView.onLowMemory();
     }
 
-//    @Override
-//    public void onDestroy() {
-//        if (mGoogleApiClient != null) {
-//            mGoogleApiClient.unregisterConnectionCallbacks(this);
-//            mGoogleApiClient.unregisterConnectionFailedListener(this);
-//
-//            if (mGoogleApiClient.isConnected()) {
-//                LocationServices.FusedLocationApi
-//                        .removeLocationUpdates(mGoogleApiClient, this);
-//                mGoogleApiClient.disconnect();
-//            }
-//        }
-//
-//        super.onDestroy();
-//        mapView.onLowMemory();
-//    }
+    @Override
+    public void onDestroy() {
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.unregisterConnectionCallbacks(this);
+            mGoogleApiClient.unregisterConnectionFailedListener(this);
+
+            if (mGoogleApiClient.isConnected()) {
+                LocationServices.FusedLocationApi
+                        .removeLocationUpdates(mGoogleApiClient, this);
+                mGoogleApiClient.disconnect();
+            }
+        }
+
+        super.onDestroy();
+        mapView.onLowMemory();
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -332,7 +344,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        //mGoogleApiClient.connect();
+        mGoogleApiClient.connect();
 //        if(dialog == false) {
 //
 //            dialog = true;
@@ -391,16 +403,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 "위치 퍼미션과 GPS 활성 여부 확인하세요");
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.d(TAG, "onLocationChanged");
-        String markerTitle = getCurrentAddress(location);
-        String markerSnippet = "위도:" + String.valueOf(location.getLatitude())
-                + " 경도:" + String.valueOf(location.getLongitude());
-        //현재 위치에 마커 생성
-        setCurrentLocation(location, markerTitle, markerSnippet);
-    }
-
     //여기부터는 런타임 퍼미션 처리을 위한 메소드들
     @TargetApi(Build.VERSION_CODES.M)
     private void checkPermissions() {
@@ -423,6 +425,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         }
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(TAG, "onLocationChanged");
+        String markerTitle = getCurrentAddress(location);
+        String markerSnippet = "위도:" + String.valueOf(location.getLatitude())
+                + " 경도:" + String.valueOf(location.getLongitude());
+        //현재 위치에 마커 생성
+        setCurrentLocation(location, markerTitle, markerSnippet);
+    }
 
     public String getCurrentAddress(Location location) {
         //지오코더... GPS를 주소로 변환
