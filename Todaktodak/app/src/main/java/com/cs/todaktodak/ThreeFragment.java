@@ -42,6 +42,9 @@ public class ThreeFragment extends Fragment {
     RequestQueue requestQueue;
     View dialogView, dialogView_title;
 
+    ArrayList<ArrayList<String>> hospitalAddress = null;
+    final String[] arrProv = new String[]{"남구", "북구", "사상구", "사하구", "서구", "연제구", "중구", "영도구"};
+
 
     public ThreeFragment() {
     }
@@ -58,9 +61,6 @@ public class ThreeFragment extends Fragment {
         // Volley, JSON 받아오기
         // Creates the Volley request queue
         requestQueue = Volley.newRequestQueue(getActivity());
-
-        ArrayList<ArrayList<String>> hospitalAddress = null;
-        final String[] arrProv = new String[]{"남구", "북구", "사상구", "사하구", "서구", "연제구", "중구", "영도구"};
 
         final ExpandableListView list = (ExpandableListView) view.findViewById(R.id.list_item);
 
@@ -182,17 +182,17 @@ public class ThreeFragment extends Fragment {
                             list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
                                 @Override
                                 public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
-
-                                    String shospitalName = hospitalName[i];
-                                    String shospitalLocation = hospitalLocation[i];
-                                    final String shospitalPhone = hospitalPhone[i];
+                                    
+                                    String shospitalName = hospitalName[i1];
+                                    String shospitalLocation = hospitalLocation[i1];
+                                    final String shospitalPhone = hospitalPhone[i1];
 
                                     final List<String> values = new ArrayList<String>();
                                     values.add("병원명 : " + shospitalName);
                                     values.add("주소 : " + shospitalLocation);
                                     if (shospitalPhone.equals("null")) {
                                     } else {
-                                        values.add("전화번호 : " + hospitalPhone[i]);
+                                        values.add("전화번호 : " + hospitalPhone[i1]);
                                     }
 
 //                                    final String[] mid = {hospitalName[i]};
