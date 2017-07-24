@@ -1,5 +1,6 @@
 package com.cs.todaktodak;
 
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
@@ -13,14 +14,17 @@ public class MarkerItem implements ClusterItem {
     private String address;
     private String title;
     private String snippet;
+    BitmapDescriptor icon;
 
-    public MarkerItem(LatLng location, String address, String title, String snippet) {
+    public MarkerItem(BitmapDescriptor icon, LatLng location, String address, String title, String snippet) {
+        this.icon = icon;
         this.location = location;
         this.address = address;
         this.title = title;
         this.snippet = snippet;
     }
 
+    public BitmapDescriptor getIcon() { return icon; }
     public LatLng getLocation() {
         return location;
     }

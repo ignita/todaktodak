@@ -43,6 +43,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -96,7 +97,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     //AlertDialog.Builder builder = null;
 
     public static String JsonURL = "https://raw.githubusercontent.com/the1994/todaktodak/master/hospitals.json";
-
 
 
     // 병원 주소 '()' 부분 제외하고 담는 변수
@@ -495,7 +495,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     //여기부터는 GPS 활성화를 위한 메소드들
     private void showDialogForLocationServiceSetting() {
-        Toast.makeText(getActivity(), "다이얼로그", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "잠시만", Toast.LENGTH_SHORT).show();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("위치 서비스 비활성화");
         builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n"
@@ -517,7 +517,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         });
         builder.create().show();
     }
-
     public boolean checkLocationServicesStatus() {
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
@@ -549,7 +548,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 break;
         }
     }
-
 
     // 주소를 위도 경도로
     public LatLng getLocationFromAddress(Context context, String inputtedAddress) {
@@ -739,15 +737,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         ClusterManager<MarkerItem> mClusterManager = new ClusterManager<>(getActivity(), mGoogleMap);
         mGoogleMap.setOnCameraChangeListener(mClusterManager);
 
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.marker);
         for (int i = 0; i < 93; i++) {
             try {
-                mClusterManager.addItem(new MarkerItem((getLocationFromAddress(getActivity(), addressNames.get(i))), hospitalLoc.get(i), hospitalName.get(i), hospitalLoc.get(i)));
-               mClusterManager.setRenderer(new OwnRendring(getActivity(), mGoogleMap, mClusterManager));
 
-            } catch (Exception e) {}
+                mClusterManager.addItem(new MarkerItem(icon,(getLocationFromAddress(getActivity(), addressNames.get(i))), hospitalLoc.get(i), hospitalName.get(i), hospitalLoc.get(i)));
+                mClusterManager.setRenderer(new OwnRendring(getActivity(), mGoogleMap, mClusterManager));
+
+            } catch (Exception e) {
+            }
         }
     }
 
+    // 클러스터 렌더링(마커 아이콘, 타이틀, 스니펫 등 지정
     public class OwnRendring extends DefaultClusterRenderer<MarkerItem> {
 
         public OwnRendring(Context context, GoogleMap map,
@@ -755,9 +757,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             super(context, map, clusterManager);
         }
 
-
         protected void onBeforeClusterItemRendered(MarkerItem item, MarkerOptions markerOptions) {
-
+            markerOptions.icon(item.getIcon());
             markerOptions.snippet(item.getSnippet());
             markerOptions.title(item.getTitle());
             super.onBeforeClusterItemRendered(item, markerOptions);
