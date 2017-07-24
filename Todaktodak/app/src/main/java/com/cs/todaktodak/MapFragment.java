@@ -11,6 +11,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,6 +43,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -51,7 +53,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
@@ -87,23 +94,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     boolean askPermissionOnceAgain = false;
     //AlertDialog.Builder builder = null;
 
-
-    //public static String addressUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=";
-    public static String addressUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=";
-
-    private String[] LikelyPlaceNames = null;
-    private String[] LikelyAddresses = null;
-    private String[] LikelyAttributions = null;
-    private LatLng[] LikelyLatLngs = null;
+    public static String JsonURL = "https://raw.githubusercontent.com/the1994/todaktodak/master/hospitals.json";
 
 
-    String hospitalAddress[];
-    String hospitalName[];
-    String hospitalPhone[];
-    int hospitalNum = 0;
-    String location[];
 
-    String[] addressNames;
+    ArrayList<String> addressNames = new ArrayList<>();
+
+    ArrayList<String> hospitalName = new ArrayList<>();
+    ArrayList<String> hospitalLoc = new ArrayList<>();
+    ArrayList<String> hospitalPhone = new ArrayList<>();
+
+    ConnectionClass connectionClass;
 
 
     public MapFragment() {
@@ -112,8 +113,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
@@ -287,36 +286,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             mGoogleMap.setMyLocationEnabled(true);
         }
 
-        location = new String[93];
-        location = loadLocationsFromServer();
+        connectionClass = new ConnectionClass();
+        connectionClass.execute(JsonURL);
 
         // Add a marker in Seoul and move the camera
         map.addMarker(new MarkerOptions().position(Seoul));
         //map.moveCamera(CameraUpdateFactory.newLatLngZoom(Seoul, 14.0f));
 
-        // 클러스터 매니저를 생성
-        ClusterManager<MarkerItem> mClusterManager = new ClusterManager<>(getActivity(), map);
-        map.setOnCameraChangeListener(mClusterManager);
-
-        for (int i = 0; i < 93; i++) {
-//            mClusterManager.addItem(new MarkerItem((getLocationFromAddress(getActivity(), location[i])), location[i]));
-            //double lat = SEOUL_LAT + (i / 200d);
-            //double lng = SEOUL_LNG + (i / 200d);
-            //mClusterManager.addItem(new MarkerItem(new LatLng(lat, lng), "House"+i));
-        }
-
         // 마커 클릭 이벤트
-//        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//
-//            public boolean onMarkerClick(Marker marker) {
-//                String text = "[마커 클릭 이벤트] latitude ="
-//                        + marker.getPosition().latitude + ", longitude ="
-//                        + marker.getPosition().longitude;
-//                Toast.makeText(getActivity(), text, Toast.LENGTH_LONG)
-//                        .show();
-//                return false;
-//            }
-//        });
+        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
+            public boolean onMarkerClick(Marker marker) {
+
+                return false;
+            }
+        });
     }
 
     @Override
@@ -509,7 +493,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     //여기부터는 GPS 활성화를 위한 메소드들
-
     private void showDialogForLocationServiceSetting() {
         Toast.makeText(getActivity(), "다이얼로그", Toast.LENGTH_SHORT).show();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -567,6 +550,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
 
+    // 주소를 위도 경도로
     public LatLng getLocationFromAddress(Context context, String inputtedAddress) {
 
         Geocoder coder = new Geocoder(context);
@@ -599,83 +583,171 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         return resLatLng;
     }
 
-    public String[] loadLocationsFromServer() {
+//    public String[] loadLocationsFromServer() {
+//
+//        // Json Data URL
+//        String JsonURL = "https://rawgit.com/the1994/todaktodak/master/pet.json";
+//        // Defining the Volley request queue that handles the URL request concurrently
+//        RequestQueue requestQueue;
+//        // Volley, JSON 받아오기
+//        // Creates the Volley request queue
+//
+//
+//        requestQueue = Volley.newRequestQueue(getActivity());
+//
+//        // Creating the JsonArrayRequest class called arrayreq, passing the required parameters
+//        //JsonURL is the URL to be fetched from
+//        JsonArrayRequest arrayreq = new JsonArrayRequest(JsonURL,
+//                // The second parameter Listener overrides the method onResponse() and passes
+//                //JSONArray as a parameter
+//                new Response.Listener<JSONArray>() {
+//
+//                    // Takes the response from the JSON request
+//                    @Override
+//                    public void onResponse(JSONArray response) {
+//                        try {
+//                            // Retrieves first JSON object in outer array
+//                            JSONObject hospitalObj = response.getJSONObject(0);
+//                            // Retrieves "petHospital" from the JSON object
+//                            JSONArray hospitalArry = hospitalObj.getJSONArray("petHospital");
+//                            // Iterates through the JSON Array getting objects and adding them
+//                            //to the list view until there are no more objects in hospitalArray
+//
+//                            hospitalAddress = new String[hospitalArry.length()];
+//                            hospitalName = new String[hospitalArry.length()];
+//                            hospitalPhone = new String[hospitalArry.length()];
+//                            hospitalNum = hospitalArry.length();
+//                            addressNames = new String[hospitalNum];
+//
+//                            for (int i = 0; i < hospitalArry.length(); i++) {
+//                                //gets each JSON object within the JSON array
+//                                JSONObject jsonObject = hospitalArry.getJSONObject(i);
+//
+//                                // "location" 이라는 이름 받아오고
+//                                // 객체로 만든다
+//                                String name = jsonObject.getString("name");
+//                                String location = jsonObject.getString("location");
+//                                String phone = jsonObject.getString("phone");
+//                                // 병원 주소 넣기
+//                                Log.i("TAG", location);
+//
+//                                hospitalAddress[i] = location;
+//
+//                                // 콤마 이후는 제외
+//                                StringTokenizer tokens = new StringTokenizer(hospitalAddress[i]);
+//                                addressNames[i] = tokens.nextToken(",");
+//                                //Log.i("tt", addressNames[i]);
+//
+//                            }
+//                        }
+//                        // JSON 에러
+//                        catch (JSONException e) {
+//                            // 에러 발생하면, 로그에 출력
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                },
+//                // The final parameter overrides the method onErrorResponse() and passes VolleyError
+//                //as a parameter
+//                new Response.ErrorListener() {
+//                    @Override
+//                    // Handles errors that occur due to Volley
+//                    public void onErrorResponse(VolleyError error) {
+//                        Log.e("Volley", "Error");
+//                    }
+//                }
+//        );
+//        // Adds the JSON array request "arrayreq" to the request queue
+//        requestQueue.add(arrayreq);
+//        return addressNames;
+//    }
 
-        // Json Data URL
-        String JsonURL = "https://rawgit.com/the1994/todaktodak/master/pet.json";
-        // Defining the Volley request queue that handles the URL request concurrently
-        RequestQueue requestQueue;
-        // Volley, JSON 받아오기
-        // Creates the Volley request queue
+    // JSON 받아오기
+    private class ConnectionClass extends AsyncTask<String, Integer, String> {
 
+        @Override
+        protected String doInBackground(String... urls) {
 
-        requestQueue = Volley.newRequestQueue(getActivity());
+            StringBuilder jsonHtml = new StringBuilder();
+            try {
+                // 연결 url 설정
+                URL url = new URL(urls[0]);
 
-        // Creating the JsonArrayRequest class called arrayreq, passing the required parameters
-        //JsonURL is the URL to be fetched from
-        JsonArrayRequest arrayreq = new JsonArrayRequest(JsonURL,
-                // The second parameter Listener overrides the method onResponse() and passes
-                //JSONArray as a parameter
-                new Response.Listener<JSONArray>() {
+                // 커넥션 객체 생성
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-                    // Takes the response from the JSON request
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        try {
-                            // Retrieves first JSON object in outer array
-                            JSONObject hospitalObj = response.getJSONObject(0);
-                            // Retrieves "petHospital" from the JSON object
-                            JSONArray hospitalArry = hospitalObj.getJSONArray("petHospital");
-                            // Iterates through the JSON Array getting objects and adding them
-                            //to the list view until there are no more objects in hospitalArray
+                // 연결되었으면.
+                if (conn != null) {
+                    conn.setConnectTimeout(10000);
+                    conn.setUseCaches(false);
 
-                            hospitalAddress = new String[hospitalArry.length()];
-                            hospitalName = new String[hospitalArry.length()];
-                            hospitalPhone = new String[hospitalArry.length()];
-                            hospitalNum = hospitalArry.length();
-                            addressNames = new String[hospitalNum];
+                    // 연결되었음 코드가 리턴되면.
+                    if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"));
+                        for (; ; ) {
+                            // 웹상에 보여지는 텍스트를 라인단위로 읽어 저장.
+                            String line = br.readLine();
 
-                            for (int i = 0; i < hospitalArry.length(); i++) {
-                                //gets each JSON object within the JSON array
-                                JSONObject jsonObject = hospitalArry.getJSONObject(i);
-
-                                // "location" 이라는 이름 받아오고
-                                // 객체로 만든다
-                                String name = jsonObject.getString("name");
-                                String location = jsonObject.getString("location");
-                                String phone = jsonObject.getString("phone");
-                                // 병원 주소 넣기
-                                Log.i("TAG", location);
-
-                                hospitalAddress[i] = location;
-
-                                // 콤마 이후는 제외
-                                StringTokenizer tokens = new StringTokenizer(hospitalAddress[i]);
-                                addressNames[i] = tokens.nextToken(",");
-                                //Log.i("tt", addressNames[i]);
-
-                            }
+                            if (line == null) break;
+                            // 저장된 텍스트 라인을 jsonHtml에 붙여넣음
+                            jsonHtml.append(line + "\n");
                         }
-                        // JSON 에러
-                        catch (JSONException e) {
-                            // 에러 발생하면, 로그에 출력
-                            e.printStackTrace();
-                        }
+                        br.close();
                     }
-                },
-                // The final parameter overrides the method onErrorResponse() and passes VolleyError
-                //as a parameter
-                new Response.ErrorListener() {
-                    @Override
-                    // Handles errors that occur due to Volley
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("Volley", "Error");
-                    }
+                    conn.disconnect();
                 }
-        );
-        // Adds the JSON array request "arrayreq" to the request queue
-        requestQueue.add(arrayreq);
-        return addressNames;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return jsonHtml.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String str) {
+            try {
+                JSONObject root = new JSONObject(str);
+                JSONArray ja = root.getJSONArray("petHospital");
+
+                for (int i = 0; i < ja.length(); i++) {
+
+                    JSONObject ho = ja.getJSONObject(i);
+                    hospitalName.add((ho.getString("name")));
+                    hospitalLoc.add(ho.getString("location"));
+                    hospitalPhone.add(ho.getString("phone"));
+
+                    // 콤마 이후는 제외
+                    StringTokenizer tokens = new StringTokenizer(hospitalLoc.get(i));
+                    addressNames.add(tokens.nextToken("("));
+
+                    //Log.i("add", hospitalLoc.get(i));
+                    //Log.i("add2", addressNames.get(i));
+                }
+                markeradder();
+                notify();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // 마커 추가하기
+    public synchronized void markeradder() {
+
+        // 클러스터 매니저를 생성
+        ClusterManager<MarkerItem> mClusterManager = new ClusterManager<>(getActivity(), mGoogleMap);
+        mGoogleMap.setOnCameraChangeListener(mClusterManager);
+
+        for (int i = 0; i < 93; i++) {
+//            mClusterManager.addItem(new MarkerItem((getLocationFromAddress(getActivity(), location[i])), location[i]));
+            //double lat = SEOUL_LAT + (i / 200d);
+            //double lng = SEOUL_LNG + (i / 200d);
+            //mClusterManager.addItem(new MarkerItem(new LatLng(lat, lng), "House"+i))
+            try {
+                mClusterManager.addItem(new MarkerItem((getLocationFromAddress(getActivity(), addressNames.get(i))), hospitalName.get(i)));
+            } catch (Exception e) {}
+        }
+
     }
 
 }

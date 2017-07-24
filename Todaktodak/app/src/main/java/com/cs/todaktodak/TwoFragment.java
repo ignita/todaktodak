@@ -18,7 +18,6 @@ public class TwoFragment extends Fragment{
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.i("11","Aa");
         super.onCreate(savedInstanceState);
     }
 
