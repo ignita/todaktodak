@@ -48,6 +48,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
@@ -117,33 +118,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         super.onCreate(savedInstanceState);
     }
 
-    public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
-        if (currentMarker != null) currentMarker.remove();
-        if (location != null) {
-            //현재위치의 위도 경도 가져옴
-            LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-//            MarkerOptions markerOptions = new MarkerOptions();
-//            markerOptions.position(currentLocation);
-//            markerOptions.title(markerTitle);
-//            markerOptions.snippet(markerSnippet);
-//            markerOptions.draggable(true);
-//            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-//            currentMarker = this.mGoogleMap.addMarker(markerOptions);
-
-            this.mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
-            return;
-        }
-
-//        MarkerOptions markerOptions = new MarkerOptions();
-//        markerOptions.position(DEFAULT_LOCATION);
-//        markerOptions.title(markerTitle);
-//        markerOptions.snippet(markerSnippet);
-//        markerOptions.draggable(true);
-//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-//        currentMarker = this.mGoogleMap.addMarker(markerOptions);
-        this.mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_LOCATION));
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -162,20 +136,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mapView.onStart();
     }
 
-//    @Override
-//    public void onStop() {
-//        Log.d(TAG, "onStop");
-//        super.onStop();
-//        mapView.onStop();
-//        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-//            mGoogleApiClient.disconnect();
-//        }
-//    }
-
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
+    public void onStop() {
+        Log.d(TAG, "onStop");
+        super.onStop();
+        mapView.onStop();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
     }
 
     @Override
@@ -237,6 +205,39 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mapView.onLowMemory();
     }
 
+    public void setCurrentLocation(Location location, String markerTitle, String markerSnippet) {
+        if (currentMarker != null) currentMarker.remove();
+        if (location != null) {
+            //현재위치의 위도 경도 가져옴
+            LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+//            MarkerOptions markerOptions = new MarkerOptions();
+//            markerOptions.position(currentLocation);
+//            markerOptions.title(markerTitle);
+//            markerOptions.snippet(markerSnippet);
+//            markerOptions.draggable(true);
+//            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+//            currentMarker = this.mGoogleMap.addMarker(markerOptions);
+
+            this.mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
+            return;
+        }
+
+//        MarkerOptions markerOptions = new MarkerOptions();
+//        markerOptions.position(DEFAULT_LOCATION);
+//        markerOptions.title(markerTitle);
+//        markerOptions.snippet(markerSnippet);
+//        markerOptions.draggable(true);
+//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+//        currentMarker = this.mGoogleMap.addMarker(markerOptions);
+        this.mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(DEFAULT_LOCATION));
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
+    }
+
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -250,8 +251,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onMapReady(GoogleMap map) {
-
-
         Log.d(TAG, "onMapReady");
         mGoogleMap = map;
         //런타임 퍼미션 요청 대화상자나 GPS 활성 요청 대화상자 보이기전에
@@ -294,14 +293,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         // Add a marker in Seoul and move the camera
         map.addMarker(new MarkerOptions().position(Seoul));
         //map.moveCamera(CameraUpdateFactory.newLatLngZoom(Seoul, 14.0f));
-
-        // 마커 클릭 이벤트
-        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            public boolean onMarkerClick(Marker marker) {
-
-                return false;
-            }
-        });
     }
 
     @Override
@@ -517,6 +508,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         });
         builder.create().show();
     }
+
     public boolean checkLocationServicesStatus() {
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
@@ -718,8 +710,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                     StringTokenizer tokens = new StringTokenizer(hospitalLoc.get(i));
                     addressNames.add(tokens.nextToken("("));
 
-                    //Log.i("add", hospitalLoc.get(i));
-                    Log.i("add2", addressNames.get(i));
+                    //Log.i("add2", addressNames.get(i));
                 }
                 markeradder();
                 notify();
@@ -741,9 +732,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         for (int i = 0; i < 93; i++) {
             try {
 
-                mClusterManager.addItem(new MarkerItem(icon,(getLocationFromAddress(getActivity(), addressNames.get(i))), hospitalLoc.get(i), hospitalName.get(i), hospitalLoc.get(i)));
+                mClusterManager.addItem(new MarkerItem(icon, (getLocationFromAddress(getActivity(), addressNames.get(i))), hospitalLoc.get(i), hospitalName.get(i), hospitalLoc.get(i)));
                 mClusterManager.setRenderer(new OwnRendring(getActivity(), mGoogleMap, mClusterManager));
 
+                // Dialog 출력
+                mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                    @Override
+                    public void onInfoWindowClick(Marker marker) {
+
+                        // 다이얼로그 바디
+                        AlertDialog.Builder alert_confirm = new AlertDialog.Builder(getActivity());
+                        // 메세지
+                        alert_confirm.setMessage("기본 다이얼로그 입니다.");
+                        // 확인 버튼 리스너
+                        alert_confirm.setPositiveButton("확인", null);
+                        // 다이얼로그 생성
+                        AlertDialog alert = alert_confirm.create();
+
+                        // 다이얼로그 타이틀
+                        alert.setTitle("test");
+                        // 다이얼로그 보기
+                        alert.show();
+                    }
+                });
             } catch (Exception e) {
             }
         }
