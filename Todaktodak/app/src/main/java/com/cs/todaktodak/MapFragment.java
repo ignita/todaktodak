@@ -48,6 +48,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -98,6 +99,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
 
 
+    // 병원 주소 '()' 부분 제외하고 담는 변수
     ArrayList<String> addressNames = new ArrayList<>();
 
     ArrayList<String> hospitalName = new ArrayList<>();
@@ -295,7 +297,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
         // 마커 클릭 이벤트
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-
             public boolean onMarkerClick(Marker marker) {
 
                 return false;
@@ -720,7 +721,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                     addressNames.add(tokens.nextToken("("));
 
                     //Log.i("add", hospitalLoc.get(i));
-                    //Log.i("add2", addressNames.get(i));
+                    Log.i("add2", addressNames.get(i));
                 }
                 markeradder();
                 notify();
@@ -739,15 +740,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mGoogleMap.setOnCameraChangeListener(mClusterManager);
 
         for (int i = 0; i < 93; i++) {
-//            mClusterManager.addItem(new MarkerItem((getLocationFromAddress(getActivity(), location[i])), location[i]));
-            //double lat = SEOUL_LAT + (i / 200d);
-            //double lng = SEOUL_LNG + (i / 200d);
-            //mClusterManager.addItem(new MarkerItem(new LatLng(lat, lng), "House"+i))
             try {
-                mClusterManager.addItem(new MarkerItem((getLocationFromAddress(getActivity(), addressNames.get(i))), hospitalName.get(i)));
+                mClusterManager.addItem(new MarkerItem((getLocationFromAddress(getActivity(), addressNames.get(i))), hospitalLoc.get(i), hospitalName.get(i), hospitalLoc.get(i)));
+               mClusterManager.setRenderer(new OwnRendring(getActivity(), mGoogleMap, mClusterManager));
+
             } catch (Exception e) {}
         }
+    }
 
+    public class OwnRendring extends DefaultClusterRenderer<MarkerItem> {
+
+        public OwnRendring(Context context, GoogleMap map,
+                           ClusterManager<MarkerItem> clusterManager) {
+            super(context, map, clusterManager);
+        }
+
+
+        protected void onBeforeClusterItemRendered(MarkerItem item, MarkerOptions markerOptions) {
+
+            markerOptions.snippet(item.getSnippet());
+            markerOptions.title(item.getTitle());
+            super.onBeforeClusterItemRendered(item, markerOptions);
+        }
     }
 
 }

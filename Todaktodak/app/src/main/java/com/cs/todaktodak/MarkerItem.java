@@ -11,10 +11,14 @@ public class MarkerItem implements ClusterItem {
 
     private LatLng location;
     private String address;
+    private String title;
+    private String snippet;
 
-    public MarkerItem(LatLng location, String address) {
+    public MarkerItem(LatLng location, String address, String title, String snippet) {
         this.location = location;
         this.address = address;
+        this.title = title;
+        this.snippet = snippet;
     }
 
     public LatLng getLocation() {
@@ -27,6 +31,14 @@ public class MarkerItem implements ClusterItem {
 
     public String getAddress() {
         return address;
+    }
+
+    public String getSnippet() {
+        return snippet;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public void setAddress(String address) {

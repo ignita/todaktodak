@@ -22,11 +22,6 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-//    private int[] tabIcons = {
-//            R.drawable.ic_map,
-//            R.drawable.ic_tel,
-//            R.drawable.ic_list
-//    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setOffscreenPageLimit(3);
         setupViewPager(viewPager);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -55,21 +51,21 @@ public class MainActivity extends AppCompatActivity {
         tabOne.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_map,0,0);
         tabLayout.getTabAt(0).setCustomView(tabOne);
 
-//        TextView tabTwo = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-//        tabTwo.setText("정보");
-//        tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_tel,0,0);
-//        tabLayout.getTabAt(1).setCustomView(tabTwo);
+        TextView tabTwo = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+        tabTwo.setText("정보");
+        tabTwo.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_tel,0,0);
+        tabLayout.getTabAt(1).setCustomView(tabTwo);
 
         TextView tabThree = (TextView) LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
         tabThree.setText("목록");
         tabThree.setCompoundDrawablesWithIntrinsicBounds(0, R.drawable.ic_list,0,0);
-        tabLayout.getTabAt(1).setCustomView(tabThree);
+        tabLayout.getTabAt(2).setCustomView(tabThree);
     }
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new MapFragment(), "지도보기");
-        //adapter.addFragment(new TwoFragment(), "정보");
+        adapter.addFragment(new TwoFragment(), "정보");
         adapter.addFragment(new ThreeFragment(), "병원목록");
         viewPager.setAdapter(adapter);
     }
