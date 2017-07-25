@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -106,6 +107,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     ArrayList<String> hospitalName = new ArrayList<>();
     ArrayList<String> hospitalLoc = new ArrayList<>();
     ArrayList<String> hospitalPhone = new ArrayList<>();
+    int hospitalNum = 0;
+
+    ArrayList<PetHospital> petHospitals = new ArrayList<PetHospital>();
 
     ConnectionClass connectionClass;
 
@@ -293,6 +297,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         // Add a marker in Seoul and move the camera
         map.addMarker(new MarkerOptions().position(Seoul));
         //map.moveCamera(CameraUpdateFactory.newLatLngZoom(Seoul, 14.0f));
+
     }
 
     @Override
@@ -698,19 +703,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             try {
                 JSONObject root = new JSONObject(str);
                 JSONArray ja = root.getJSONArray("petHospital");
+                hospitalNum = ja.length();
+                int num = ja.length();
 
                 for (int i = 0; i < ja.length(); i++) {
 
                     JSONObject ho = ja.getJSONObject(i);
-                    hospitalName.add((ho.getString("name")));
-                    hospitalLoc.add(ho.getString("location"));
-                    hospitalPhone.add(ho.getString("phone"));
+
+                    String name = ho.getString("name");
+                    String address = ho.getString("location");
+                    String phone = ho.getString("phone");
 
                     // 콤마 이후는 제외
-                    StringTokenizer tokens = new StringTokenizer(hospitalLoc.get(i));
-                    addressNames.add(tokens.nextToken("("));
+                    StringTokenizer tokens = new StringTokenizer(address);
 
-                    //Log.i("add2", addressNames.get(i));
+                    String searchAddress = tokens.nextToken("(");
+
+                    petHospitals.add(i, new PetHospital(name, searchAddress, phone, num));
                 }
                 markeradder();
                 notify();
@@ -728,39 +737,70 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         ClusterManager<MarkerItem> mClusterManager = new ClusterManager<>(getActivity(), mGoogleMap);
         mGoogleMap.setOnCameraChangeListener(mClusterManager);
 
+        String name;
+        String address;
+        String phone;
+        String snippet;
+
+        // 마커 이미지
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.marker);
-        for (int i = 0; i < 93; i++) {
+
+        for (int i = 0; i < petHospitals.size(); i++) {
+            name = petHospitals.get(i).getName();
+            address = petHospitals.get(i).getAddress();
+            phone = petHospitals.get(i).getPhone();
+
+
             try {
-
-                mClusterManager.addItem(new MarkerItem(icon, (getLocationFromAddress(getActivity(), addressNames.get(i))), hospitalLoc.get(i), hospitalName.get(i), hospitalLoc.get(i)));
+                mClusterManager.addItem(new MarkerItem(icon, (getLocationFromAddress(getActivity(), address)), address, name, String.valueOf(i)));
                 mClusterManager.setRenderer(new OwnRendring(getActivity(), mGoogleMap, mClusterManager));
-
-                // Dialog 출력
-                mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-                    @Override
-                    public void onInfoWindowClick(Marker marker) {
-
-                        // 다이얼로그 바디
-                        AlertDialog.Builder alert_confirm = new AlertDialog.Builder(getActivity());
-                        // 메세지
-                        alert_confirm.setMessage("기본 다이얼로그 입니다.");
-                        // 확인 버튼 리스너
-                        alert_confirm.setPositiveButton("확인", null);
-                        // 다이얼로그 생성
-                        AlertDialog alert = alert_confirm.create();
-
-                        // 다이얼로그 타이틀
-                        alert.setTitle("test");
-                        // 다이얼로그 보기
-                        alert.show();
-                    }
-                });
             } catch (Exception e) {
             }
         }
+
+        // InfoWindow 클릭 시 Dialog 출력
+        mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+//                int getInfo = Integer.parseInt(marker.getSnippet());
+
+                // 다이얼로그 바디
+                AlertDialog.Builder alert_confirm = new AlertDialog.Builder(getActivity());
+                // 메세지
+                alert_confirm.setMessage("기본 다이얼로그 입니다.");
+                // 확인 버튼 리스너
+                alert_confirm.setPositiveButton("확인", null);
+                // 다이얼로그 생성
+                AlertDialog alert = alert_confirm.create();
+                // Log.i("id", petHospitals.get(getInfo).getName());
+                // 다이얼로그 타이틀
+                alert.setTitle(marker.getTitle());
+                // 다이얼로그 보기
+                alert.show();
+            }
+        });
+
+        mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                // Getting view from the layout file info_window_layout
+                View v = (View) View.inflate(getActivity(), R.layout.custom_infowindow, null);
+
+                TextView tvName = (TextView) v.findViewById(R.id.tv_name);
+                // setting hospital Name
+                tvName.setText(marker.getTitle());
+
+                return v;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                return null;
+            }
+        });
     }
 
-    // 클러스터 렌더링(마커 아이콘, 타이틀, 스니펫 등 지정
+    // 클러스터 렌더링(마커 아이콘, 타이틀, 스니펫 등 지정)
     public class OwnRendring extends DefaultClusterRenderer<MarkerItem> {
 
         public OwnRendring(Context context, GoogleMap map,
@@ -770,8 +810,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
         protected void onBeforeClusterItemRendered(MarkerItem item, MarkerOptions markerOptions) {
             markerOptions.icon(item.getIcon());
-            markerOptions.snippet(item.getSnippet());
+            markerOptions.snippet(item.getAddress());
             markerOptions.title(item.getTitle());
+            markerOptions.infoWindowAnchor(1f, 0f);
             super.onBeforeClusterItemRendered(item, markerOptions);
         }
     }
