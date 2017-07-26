@@ -24,6 +24,6 @@ public class PetHospital {
 
     public String getPhone() { return phone; }
 
-    public int getNum() { return num; }
+    public Integer getNum() { return num; }
 
 }

@@ -304,6 +304,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         map.addMarker(new MarkerOptions().position(Seoul));
         //map.moveCamera(CameraUpdateFactory.newLatLngZoom(Seoul, 14.0f));
 
+
     }
 
     @Override
@@ -766,13 +767,23 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
         // InfoWindow 클릭 시 Dialog 출력
         mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+
+            LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View customView = inflater.inflate(R.layout.custom_dialog_material, null);
+
+            TextView tvAddress = (TextView) customView.findViewById(R.id.tv_address);
+            TextView tvPhone = (TextView) customView.findViewById(R.id.tv_phone);
+
             @Override
             public void onInfoWindowClick(Marker marker) {
-                int getInfo = Integer.parseInt(marker.getSnippet());
+                int getNum = Integer.parseInt(marker.getSnippet());
 
-                String shospitalName = petHospitals.get(getInfo).getName();
-                String shospitalLocation = petHospitals.get(getInfo).getAddress();
-                final String shospitalPhone = petHospitals.get(getInfo).getPhone();
+                tvAddress.setText(petHospitals.get(getNum).getAddress());
+                tvPhone.setText(petHospitals.get(getNum).getPhone());
+
+                String shospitalName = petHospitals.get(getNum).getName();
+                String shospitalLocation = petHospitals.get(getNum).getAddress();
+                final String shospitalPhone = petHospitals.get(getNum).getPhone();
 
                 final List<String> values = new ArrayList<String>();
                 values.add("병원명 : " + shospitalName);
@@ -784,15 +795,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
                 new MaterialStyledDialog.Builder(getActivity())
                         .setTitle(shospitalName)
-                        .setDescription("What can we improve? Your feedback is always welcome.")
                         .setStyle(Style.HEADER_WITH_TITLE)
                         .setHeaderColor(R.color.colorPrimary)
                         .setCancelable(true)
                         .withDialogAnimation(true)
+                        .setCustomView(customView)
+                        .setPositiveText("전화걸기")
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                Log.d("MaterialStyledDialogs", "Do something!");
+                                Uri uri = Uri.parse("tel:" + shospitalPhone);
+                                Intent intent = new Intent(Intent.ACTION_DIAL, uri);
+                                startActivity(intent);
                             }
                         })
                         .show();
