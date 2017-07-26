@@ -29,6 +29,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -785,6 +787,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                         .setDescription("What can we improve? Your feedback is always welcome.")
                         .setStyle(Style.HEADER_WITH_TITLE)
                         .setHeaderColor(R.color.colorPrimary)
+                        .setCancelable(true)
+                        .withDialogAnimation(true)
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                Log.d("MaterialStyledDialogs", "Do something!");
+                            }
+                        })
                         .show();
             }
         });
