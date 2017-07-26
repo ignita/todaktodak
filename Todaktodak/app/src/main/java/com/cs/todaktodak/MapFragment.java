@@ -34,6 +34,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -112,6 +114,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     ArrayList<PetHospital> petHospitals = new ArrayList<PetHospital>();
 
     ConnectionClass connectionClass;
+
+    View dialogView, dialogView_title;
 
 
     public MapFragment() {
@@ -762,21 +766,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-//                int getInfo = Integer.parseInt(marker.getSnippet());
+                int getInfo = Integer.parseInt(marker.getSnippet());
 
-                // 다이얼로그 바디
-                AlertDialog.Builder alert_confirm = new AlertDialog.Builder(getActivity());
-                // 메세지
-                alert_confirm.setMessage("기본 다이얼로그 입니다.");
-                // 확인 버튼 리스너
-                alert_confirm.setPositiveButton("확인", null);
-                // 다이얼로그 생성
-                AlertDialog alert = alert_confirm.create();
-                // Log.i("id", petHospitals.get(getInfo).getName());
-                // 다이얼로그 타이틀
-                alert.setTitle(marker.getTitle());
-                // 다이얼로그 보기
-                alert.show();
+                String shospitalName = petHospitals.get(getInfo).getName();
+                String shospitalLocation = petHospitals.get(getInfo).getAddress();
+                final String shospitalPhone = petHospitals.get(getInfo).getPhone();
+
+                final List<String> values = new ArrayList<String>();
+                values.add("병원명 : " + shospitalName);
+                values.add("주소 : " + shospitalLocation);
+                if (shospitalPhone.equals("null")) {
+                } else {
+                    values.add("전화번호 : " + shospitalPhone);
+                }
+
+                new MaterialStyledDialog.Builder(getActivity())
+                        .setTitle(shospitalName)
+                        .setDescription("What can we improve? Your feedback is always welcome.")
+                        .setStyle(Style.HEADER_WITH_TITLE)
+                        .setHeaderColor(R.color.colorPrimary)
+                        .show();
             }
         });
 
@@ -810,7 +819,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
         protected void onBeforeClusterItemRendered(MarkerItem item, MarkerOptions markerOptions) {
             markerOptions.icon(item.getIcon());
-            markerOptions.snippet(item.getAddress());
+            markerOptions.snippet(item.getSnippet());
             markerOptions.title(item.getTitle());
             markerOptions.infoWindowAnchor(1f, 0f);
             super.onBeforeClusterItemRendered(item, markerOptions);
