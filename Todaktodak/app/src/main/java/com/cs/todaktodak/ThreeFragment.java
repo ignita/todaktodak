@@ -1,9 +1,11 @@
 package com.cs.todaktodak;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -14,13 +16,18 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.SimpleExpandableListAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.github.javiersantos.materialstyleddialogs.enums.Style;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -86,65 +93,65 @@ public class ThreeFragment extends Fragment {
         list.setAdapter(adapter);
 
         // ExpandableListView는 setOnChildClickListener로 자식 항목 선택
-//        list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-//            @Override
-//            public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
-//
-//                int getInfo = petHospitals.get(i).getNum();
-//                int num = i;
-//                int sum = 0;
-//
-//                while (num > 0) {
-//                    sum += hospitalAddress.get(num - 1).size();
-//                    num--;
-//                }
-//                Log.i("sum", Integer.toString(sum));
-//
-//                String shospitalName = petHospitals.get(getInfo).getName();
-//                String shospitalLocation = hospitalLocation[sum + i1];
-//                final String shospitalPhone = hospitalPhone[sum + i1];
-//
-//                final List<String> values = new ArrayList<String>();
-//                values.add("병원명 : " + shospitalName);
-//                values.add("주소 : " + shospitalLocation);
-//                if (shospitalPhone.equals("null")) {
-//                } else {
-//                    values.add("전화번호 : " + hospitalPhone[sum + i1]);
-//                }
-//
-//
-//                final CharSequence[] value = values.toArray(new String[values.size()]);
-//
-//                dialogView = (View) View.inflate(getActivity(), R.layout.custom_dialog, null);
-//                dialogView_title = (View) View.inflate(getActivity(), R.layout.custom_dialog_title, null);
-//                AlertDialog.Builder dlg = new AlertDialog.Builder(getActivity());
-//                dlg.setTitle("병원정보");
-//                dlg.setItems(value, null);
-//                dlg.setCustomTitle(dialogView_title);
-//                dlg.setView(dialogView);
-//                dlg.show();
-//                //final AlertDialog dialog = dlg.create();
-//
-//                ImageButton img_phone = (ImageButton) dialogView.findViewById(R.id.phone);
-//                ImageButton img_map = (ImageButton) dialogView.findViewById(R.id.map);
-//
-//                img_phone.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        Uri uri = Uri.parse("tel:" + shospitalPhone);
-//                        Intent intent = new Intent(Intent.ACTION_DIAL, uri);
-//                        startActivity(intent);
-//                    }
-//                });
-//                img_map.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        Toast.makeText(getActivity(), "지도보기", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//                return false;
-//            }
-//        });
+        list.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i1, long l) {
+
+                final View customView = (View) View.inflate(getActivity(), R.layout.custom_dialog_material_listview, null);
+
+                TextView tvAddress = (TextView) customView.findViewById(R.id.tv_address);
+                TextView tvPhone = (TextView) customView.findViewById(R.id.tv_phone);
+
+                int num = i;
+                int sum = 0;
+
+                while (num > 0) {
+                    sum += hospitalAddress.get(num - 1).size();
+                    num--;
+                }
+
+                // 병원 인덱스
+                int order = petHospitals.get(sum + i1).getNum() - 1;
+
+                String shospitalName = petHospitals.get(order).getName();
+                String shospitalLocation = petHospitals.get(order).getAddress();
+                final String shospitalPhone = petHospitals.get(order).getPhone();
+
+                tvAddress.setText(shospitalLocation);
+                tvPhone.setText(shospitalPhone);
+
+                MaterialStyledDialog.Builder builder = new MaterialStyledDialog.Builder(getActivity());
+                builder.setTitle(shospitalName)
+                        .setCustomView(customView)
+                        .setStyle(Style.HEADER_WITH_TITLE)
+                        .setHeaderColor(R.color.colorPrimary)
+                        .setCancelable(true)
+                        .withDialogAnimation(true)
+                        .withDarkerOverlay(true);
+
+                final Dialog dialog = builder.show();
+
+                ImageButton img_phone = (ImageButton) customView.findViewById(R.id.btnPhone);
+                ImageButton img_map = (ImageButton) customView.findViewById(R.id.btnMap);
+
+                img_phone.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Uri uri = Uri.parse("tel:" + shospitalPhone);
+                        Intent intent = new Intent(Intent.ACTION_DIAL, uri);
+                        startActivity(intent);
+                        dialog.dismiss();
+                    }
+                });
+                img_map.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(getActivity(), "지도보기", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                return false;
+            }
+        });
 
         return view;
     }
@@ -286,8 +293,6 @@ public class ThreeFragment extends Fragment {
             }
             cityData.add(cityes);
         }
-
-
 
 
     }
