@@ -1,7 +1,7 @@
 package com.cs.todaktodak;
 
 /**
- * Created by makalu on 2017. 7. 25..
+ * Created by yjchoi on 2017. 7. 25..
  */
 
 public class PetHospital {

@@ -14,7 +14,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,11 +30,6 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.Volley;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
 import com.google.android.gms.common.ConnectionResult;
@@ -53,12 +47,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -117,8 +109,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     ConnectionClass connectionClass;
 
-    View dialogView, dialogView_title;
-
 
     public MapFragment() {
     }
@@ -136,7 +126,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
         mapView = (MapView) layout.findViewById(R.id.map);
         mapView.getMapAsync(this);
-
         return layout;
     }
 
@@ -586,85 +575,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         return resLatLng;
     }
 
-//    public String[] loadLocationsFromServer() {
-//
-//        // Json Data URL
-//        String JsonURL = "https://rawgit.com/the1994/todaktodak/master/pet.json";
-//        // Defining the Volley request queue that handles the URL request concurrently
-//        RequestQueue requestQueue;
-//        // Volley, JSON 받아오기
-//        // Creates the Volley request queue
-//
-//
-//        requestQueue = Volley.newRequestQueue(getActivity());
-//
-//        // Creating the JsonArrayRequest class called arrayreq, passing the required parameters
-//        //JsonURL is the URL to be fetched from
-//        JsonArrayRequest arrayreq = new JsonArrayRequest(JsonURL,
-//                // The second parameter Listener overrides the method onResponse() and passes
-//                //JSONArray as a parameter
-//                new Response.Listener<JSONArray>() {
-//
-//                    // Takes the response from the JSON request
-//                    @Override
-//                    public void onResponse(JSONArray response) {
-//                        try {
-//                            // Retrieves first JSON object in outer array
-//                            JSONObject hospitalObj = response.getJSONObject(0);
-//                            // Retrieves "petHospital" from the JSON object
-//                            JSONArray hospitalArry = hospitalObj.getJSONArray("petHospital");
-//                            // Iterates through the JSON Array getting objects and adding them
-//                            //to the list view until there are no more objects in hospitalArray
-//
-//                            hospitalAddress = new String[hospitalArry.length()];
-//                            hospitalName = new String[hospitalArry.length()];
-//                            hospitalPhone = new String[hospitalArry.length()];
-//                            hospitalNum = hospitalArry.length();
-//                            addressNames = new String[hospitalNum];
-//
-//                            for (int i = 0; i < hospitalArry.length(); i++) {
-//                                //gets each JSON object within the JSON array
-//                                JSONObject jsonObject = hospitalArry.getJSONObject(i);
-//
-//                                // "location" 이라는 이름 받아오고
-//                                // 객체로 만든다
-//                                String name = jsonObject.getString("name");
-//                                String location = jsonObject.getString("location");
-//                                String phone = jsonObject.getString("phone");
-//                                // 병원 주소 넣기
-//                                Log.i("TAG", location);
-//
-//                                hospitalAddress[i] = location;
-//
-//                                // 콤마 이후는 제외
-//                                StringTokenizer tokens = new StringTokenizer(hospitalAddress[i]);
-//                                addressNames[i] = tokens.nextToken(",");
-//                                //Log.i("tt", addressNames[i]);
-//
-//                            }
-//                        }
-//                        // JSON 에러
-//                        catch (JSONException e) {
-//                            // 에러 발생하면, 로그에 출력
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                },
-//                // The final parameter overrides the method onErrorResponse() and passes VolleyError
-//                //as a parameter
-//                new Response.ErrorListener() {
-//                    @Override
-//                    // Handles errors that occur due to Volley
-//                    public void onErrorResponse(VolleyError error) {
-//                        Log.e("Volley", "Error");
-//                    }
-//                }
-//        );
-//        // Adds the JSON array request "arrayreq" to the request queue
-//        requestQueue.add(arrayreq);
-//        return addressNames;
-//    }
-
     // JSON 받아오기
     private class ConnectionClass extends AsyncTask<String, Integer, String> {
 
@@ -740,6 +650,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     // 마커 추가하기
     public synchronized void markeradder() {
 
+        View customView;
         // 클러스터 매니저를 생성
         ClusterManager<MarkerItem> mClusterManager = new ClusterManager<>(getActivity(), mGoogleMap);
         mGoogleMap.setOnCameraChangeListener(mClusterManager);
@@ -768,38 +679,30 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         // InfoWindow 클릭 시 Dialog 출력
         mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
 
-            LayoutInflater inflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View customView = inflater.inflate(R.layout.custom_dialog_material, null);
-
-            TextView tvAddress = (TextView) customView.findViewById(R.id.tv_address);
-            TextView tvPhone = (TextView) customView.findViewById(R.id.tv_phone);
-
             @Override
             public void onInfoWindowClick(Marker marker) {
-                int getNum = Integer.parseInt(marker.getSnippet());
+                View customView = (View) View.inflate(getActivity(), R.layout.custom_dialog_material, null);
 
-                tvAddress.setText(petHospitals.get(getNum).getAddress());
-                tvPhone.setText(petHospitals.get(getNum).getPhone());
+                TextView tvAddress = (TextView) customView.findViewById(R.id.tv_address);
+                TextView tvPhone = (TextView) customView.findViewById(R.id.tv_phone);
+
+                int getNum = Integer.parseInt(marker.getSnippet());
 
                 String shospitalName = petHospitals.get(getNum).getName();
                 String shospitalLocation = petHospitals.get(getNum).getAddress();
                 final String shospitalPhone = petHospitals.get(getNum).getPhone();
 
-                final List<String> values = new ArrayList<String>();
-                values.add("병원명 : " + shospitalName);
-                values.add("주소 : " + shospitalLocation);
-                if (shospitalPhone.equals("null")) {
-                } else {
-                    values.add("전화번호 : " + shospitalPhone);
-                }
+                tvAddress.setText(shospitalLocation);
+                tvPhone.setText(shospitalPhone);
 
                 new MaterialStyledDialog.Builder(getActivity())
                         .setTitle(shospitalName)
+                        .setCustomView(customView)
                         .setStyle(Style.HEADER_WITH_TITLE)
                         .setHeaderColor(R.color.colorPrimary)
                         .setCancelable(true)
                         .withDialogAnimation(true)
-                        .setCustomView(customView)
+                        .withDarkerOverlay(true)
                         .setPositiveText("전화걸기")
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
@@ -807,6 +710,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                 Uri uri = Uri.parse("tel:" + shospitalPhone);
                                 Intent intent = new Intent(Intent.ACTION_DIAL, uri);
                                 startActivity(intent);
+                                dialog.dismiss();
                             }
                         })
                         .show();

@@ -1,17 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:id="@+id/map_dialog"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="10dip">
 
     <TextView
         android:id="@+id/tv_address"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dip"
+        android:drawableLeft="@drawable/dialog_marker"
+        android:drawablePadding="5dip"
+        android:gravity="center_vertical"
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/tv_phone"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dip"
+        android:drawableLeft="@drawable/dialog_phone"
+        android:drawablePadding="5dip"
+        android:gravity="center_vertical"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dip"
+        android:drawableLeft="@drawable/dialog_time"
+        android:drawablePadding="5dip"
+        android:gravity="center_vertical"
+        android:text="이용 시간"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/tv_web"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/dialog_home"
+        android:drawablePadding="5dip"
+        android:gravity="center_vertical"
+        android:text="http:home.co.kr"
+        android:textSize="15sp" />
 
 </LinearLayout>
