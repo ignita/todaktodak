@@ -17,7 +17,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_untitled"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/MyMaterialTheme">
@@ -27,8 +27,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCe-AtV1mmBQmz2Gn95VpzGuPoFMirnybc" />
 
-        <activity android:name=".MainActivity"
-            android:theme="@style/SplashTheme">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

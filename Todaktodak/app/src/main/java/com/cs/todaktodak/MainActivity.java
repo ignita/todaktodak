@@ -1,7 +1,10 @@
 package com.cs.todaktodak;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,7 +16,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
+import com.github.javiersantos.materialstyleddialogs.enums.Style;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +39,18 @@ public class MainActivity extends AppCompatActivity {
 
     String getAddress = null;
 
+    // 뒤로가기 버튼 변수
+    private final long FINSH_INTERVAL_TIME = 2000;
+    private long backPressedTime = 0;
+
+    View customView;
+    LayoutInflater inflater;
+
     public String getAddress() {
         String t = getAddress;
         return t;
     }
+
     public void putAddress(String address) {
         getAddress = address;
         Log.i("ggg4", getAddress);
@@ -38,12 +58,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.MyMaterialTheme);
+        Log.i("googlemap", "MainActivity_onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        Intent intent = new Intent(this, LoadingActivity.class);
-//        startActivity(intent);
+        Intent intent = new Intent(this, LoadingActivity.class);
+        startActivity(intent);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -57,18 +77,6 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
         setupTabIcons();
 
-
-        // ImageButton settingBtn = (ImageButton)findViewById(R.id.settionbtn);
-
-//        settingBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Toast.makeText(getApplicationContext(),"설정",Toast.LENGTH_SHORT).show();
-//                Intent intent = new Intent(getApplicationContext(), SettingActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -76,13 +84,13 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                switch(position) {
-                    case 0:
-                        onPause();
-                        onResume();
-                    case 1:
-                        getAddress = null;
+                switch (position) {
                     case 2:
+                        onPause();
+                        break;
+                    case 0:
+                        onResume();
+                        break;
                 }
             }
 
@@ -92,6 +100,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        customView = inflater.inflate(R.layout.custom_dialog_info, null);
+
+        TextView tvVersion = (TextView) customView.findViewById(R.id.version);
+        TextView tvDev = (TextView) customView.findViewById(R.id.developer);
+    }
+
+    // 뒤로 가기 버튼으로 종료하기
+    @Override
+    public void onBackPressed() {
+        long tempTime = System.currentTimeMillis();
+        long intervalTime = tempTime - backPressedTime;
+
+        if (0 <= intervalTime && FINSH_INTERVAL_TIME >= intervalTime) {
+            super.onBackPressed();
+        } else {
+            backPressedTime = tempTime;
+            Toast.makeText(getApplicationContext(), "'뒤로'버튼을한번더누르시면종료됩니다.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -99,6 +126,36 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_info:
+                new MaterialStyledDialog.Builder(this)
+                        .setTitle("애플리케이션 정보")
+                        .setStyle(Style.HEADER_WITH_ICON)
+                        .setCancelable(true)
+                        .setCustomView(customView)
+                        .setHeaderColor(R.color.colorPrimary)
+                        .withDialogAnimation(true)
+                        .withDarkerOverlay(true)
+                        .setIcon(R.drawable.app)
+                        .withIconAnimation(true)
+                        .setNegativeText("닫기")
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+                return true;
+            case R.id.quit:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setupTabIcons() {
@@ -149,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
         }
-
 
         @Override
         public CharSequence getPageTitle(int position) {

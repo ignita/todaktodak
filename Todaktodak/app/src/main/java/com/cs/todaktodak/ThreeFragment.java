@@ -20,6 +20,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
@@ -41,7 +42,7 @@ import java.util.StringTokenizer;
 public class ThreeFragment extends Fragment {
 
     // Json Data URL
-    String JsonURL = "https://raw.githubusercontent.com/the1994/todaktodak/master/pet.json";
+    String JsonURL = "https://raw.githubusercontent.com/the1994/todaktodak/master/hospitals.json";
     // Defining the Volley request queue that handles the URL request concurrently
     RequestQueue requestQueue;
 
@@ -85,19 +86,19 @@ public class ThreeFragment extends Fragment {
 
         // Creating the JsonArrayRequest class called arrayreq, passing the required parameters
         //JsonURL is the URL to be fetched from
-        JsonArrayRequest arrayreq = new JsonArrayRequest(JsonURL,
+        JsonObjectRequest arrayreq = new JsonObjectRequest(JsonURL,
                 // The second parameter Listener overrides the method onResponse() and passes
                 //JSONArray as a parameter
-                new Response.Listener<JSONArray>() {
+                new Response.Listener<JSONObject>() {
 
                     // Takes the response from the JSON request
                     @Override
-                    public void onResponse(JSONArray response) {
+                    public void onResponse(JSONObject response) {
                         try {
-                            // Retrieves first JSON object in outer array
-                            JSONObject hospitalObj = response.getJSONObject(0);
-                            // Retrieves "petHospital" from the JSON object
-                            final JSONArray hospitalArry = hospitalObj.getJSONArray("petHospital");
+//                            // Retrieves first JSON object in outer array
+//                            JSONObject hospitalObj = response.getJSONObject(0);
+//                            // Retrieves "petHospital" from the JSON object
+                            final JSONArray hospitalArry = response.getJSONArray("petHospital");
                             // Iterates through the JSON Array getting objects and adding them
                             //to the list view until there are no more objects in hospitalArray
 
