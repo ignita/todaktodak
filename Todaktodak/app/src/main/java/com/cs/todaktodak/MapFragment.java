@@ -105,17 +105,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     ConnectionClass connectionClass;
 
+    ClusterManager<MarkerItem> mClusterManager;
+
+    ArrayList<LatLng> latLngs = new ArrayList<LatLng>();
+
     public MapFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // Activity의 onCreate()와 비슷하나 ui관련 작업을 할 수 없다.
+        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        // 레이아웃을 inflater하여 view 작업
+        Log.d(TAG, "onCreateView");
         View layout = inflater.inflate(R.layout.fragment_map, container, false);
 
         mapView = (MapView) layout.findViewById(R.id.map);
@@ -136,7 +143,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 tvAll.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
                 tvAll.setPaintFlags(tvAll.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
                 tvNight.setTextColor(Color.DKGRAY);
-                tvNight.setPaintFlags(tvNight.getPaintFlags() &~ Paint.FAKE_BOLD_TEXT_FLAG);
+                tvNight.setPaintFlags(tvNight.getPaintFlags() & ~Paint.FAKE_BOLD_TEXT_FLAG);
+
+                markeradder();
             }
         });
 
@@ -144,9 +153,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             @Override
             public void onClick(View view) {
                 tvAll.setTextColor(Color.DKGRAY);
-                tvAll.setPaintFlags(tvNight.getPaintFlags() &~ Paint.FAKE_BOLD_TEXT_FLAG);
+                tvAll.setPaintFlags(tvNight.getPaintFlags() & ~Paint.FAKE_BOLD_TEXT_FLAG);
                 tvNight.setTextColor(ContextCompat.getColor(getActivity(), R.color.colorNightTime));
                 tvNight.setPaintFlags(tvNight.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
+
+                mGoogleMap.clear();
+
             }
         });
 
@@ -155,6 +167,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onResume() {
+
+        // 프래그먼트가 화면에 완전히 그려졌을 때
         super.onResume();
         mapView.onResume();
         Log.d(TAG, "onResume");
@@ -245,6 +259,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     @Override
     public void onMapReady(GoogleMap map) {
         Log.d(TAG, "onMapReady");
+        Toast.makeText(getActivity(),"잠시만 기다려주세요.",Toast.LENGTH_LONG).show();
         mGoogleMap = map;
         //런타임 퍼미션 요청 대화상자나 GPS 활성 요청 대화상자 보이기전에
         //지도의 초기위치를 동의대역으로 이동
@@ -339,8 +354,89 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             LocationServices.FusedLocationApi
                     .requestLocationUpdates(mGoogleApiClient, locationRequest, this);
             mGoogleMap.getUiSettings().setCompassEnabled(true);
-            //mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-           // mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+
+            // InfoWindow 클릭 시 Dialog 출력
+            mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+
+                @Override
+                public void onInfoWindowClick(Marker marker) {
+                    View customView = (View) View.inflate(getActivity(), R.layout.custom_dialog_material, null);
+
+                    TextView tvAddress = (TextView) customView.findViewById(R.id.tv_address);
+                    TextView tvPhone = (TextView) customView.findViewById(R.id.tv_phone);
+                    TextView tvTime = (TextView) customView.findViewById(R.id.tv_time);
+                    TextView tvWeb = (TextView) customView.findViewById(R.id.tv_web);
+
+                    int getNum = Integer.parseInt(marker.getSnippet());
+
+                    String shospitalName = petHospitals.get(getNum).getName();
+                    String shospitalLocation = originAddress.get(getNum);
+                    final String shospitalPhone = petHospitals.get(getNum).getPhone();
+                    String time = petHospitals.get(getNum).getTime();
+                    String night = petHospitals.get(getNum).getNight();
+                    String homepage = petHospitals.get(getNum).getHomepage();
+
+                    tvAddress.setText(shospitalLocation);
+
+                    if (shospitalPhone.equals("null")) {
+                        tvPhone.setText("정보없음");
+                    } else tvPhone.setText(shospitalPhone);
+
+                    tvTime.setText(time);
+                    if (homepage.equals("null")) {
+                        tvWeb.setText("-");
+                    } else tvWeb.setText(homepage);
+
+                    int color = 0;
+
+                    switch (night) {
+                        case "T":
+                            color = R.color.colorNightTime;
+                            break;
+                        case "F":
+                            color = R.color.colorPrimary;
+                            break;
+                    }
+                    new MaterialStyledDialog.Builder(getActivity())
+                            .setTitle(shospitalName)
+                            .setCustomView(customView)
+                            .setStyle(Style.HEADER_WITH_TITLE)
+                            .setHeaderColor(color)
+                            .setCancelable(true)
+                            .withDialogAnimation(true)
+                            .withDarkerOverlay(true)
+                            .setPositiveText("전화걸기")
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    Uri uri = Uri.parse("tel:" + shospitalPhone);
+                                    Intent intent = new Intent(Intent.ACTION_DIAL, uri);
+                                    startActivity(intent);
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
+                }
+            });
+
+            mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                @Override
+                public View getInfoWindow(Marker marker) {
+                    // Getting view from the layout file info_window_layout
+                    View v = (View) View.inflate(getActivity(), R.layout.custom_infowindow, null);
+
+                    TextView tvName = (TextView) v.findViewById(R.id.tv_name);
+                    // setting hospital Name
+                    tvName.setText(marker.getTitle());
+
+                    return v;
+                }
+
+                @Override
+                public View getInfoContents(Marker marker) {
+                    return null;
+                }
+            });
         }
     }
 
@@ -396,32 +492,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 //        setCurrentLocation(location, markerTitle, markerSnippet);
     }
 
-//    public String getCurrentAddress(Location location) {
-//        //지오코더... GPS를 주소로 변환
-//        Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
-//        List<Address> addresses;
-//        try {
-//            addresses = geocoder.getFromLocation(
-//                    location.getLatitude(),
-//                    location.getLongitude(),
-//                    1);
-//        } catch (IOException ioException) {
-//            //네트워크 문제
-//            Toast.makeText(getActivity(), "지오코더 서비스 사용불가", Toast.LENGTH_LONG).show();
-//            return "지오코더 서비스 사용불가";
-//        } catch (IllegalArgumentException illegalArgumentException) {
-//            Toast.makeText(getActivity(), "잘못된 GPS 좌표", Toast.LENGTH_LONG).show();
-//            return "잘못된 GPS 좌표";
-//        }
-//        if (addresses == null || addresses.size() == 0) {
-//            Toast.makeText(getActivity(), "주소 미발견", Toast.LENGTH_LONG).show();
-//            return "주소 미발견";
-//        } else {
-//            Address address = addresses.get(0);
-//            return address.getAddressLine(0).toString();
-//        }
-//    }
-
     @TargetApi(Build.VERSION_CODES.M)
     private void showDialogForPermission(String msg) {
         Log.d(TAG, "showDialogForPermission");
@@ -471,7 +541,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     //여기부터는 GPS 활성화를 위한 메소드들
     private void showDialogForLocationServiceSetting() {
-        Toast.makeText(getActivity(), "잠시만", Toast.LENGTH_SHORT).show();
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("위치 서비스 비활성화");
         builder.setMessage("앱을 사용하기 위해서는 위치 서비스가 필요합니다.\n"
@@ -535,25 +605,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
         try {
             // May throw an IOException
-            address = coder.getFromLocationName(inputtedAddress, 5);
-            if (address == null) {
-                return null;
+            address = coder.getFromLocationName(inputtedAddress, 1);
+            if (address.size() > 0) {   // 주소값이 존재하면,
+                Address location = address.get(0);  // Address 형태로
+                resLatLng = new LatLng(location.getLatitude(), location.getLongitude());
             }
-
-            if (address.size() == 0) {
-                return null;
-            }
-
-            Address location = address.get(0);
-            location.getLatitude();
-            location.getLongitude();
-
-            resLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 
         } catch (IOException ex) {
-
             ex.printStackTrace();
-            Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG).show();
         }
 
         return resLatLng;
@@ -565,6 +624,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         @Override
         protected String doInBackground(String... urls) {
 
+            Log.i(TAG, "doInBackground");
             StringBuilder jsonHtml = new StringBuilder();
             try {
                 // 연결 url 설정
@@ -601,6 +661,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
         @Override
         protected void onPostExecute(String str) {
+            Log.i(TAG, "onPostExecute");
             try {
                 JSONObject root = new JSONObject(str);
                 JSONArray ja = root.getJSONArray("petHospital");
@@ -625,6 +686,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
                     petHospitals.add(i, new PetHospital(name, searchAddress, phone, num, time, night, homepage));
                     originAddress.add(i, address);
+                    latLngs.add(i, getLocationFromAddress(getActivity(), searchAddress));
                 }
                 markeradder();
                 notify();
@@ -635,20 +697,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         }
     }
 
-    public synchronized  void markeradderNight() {
-
-    }
     // 마커 추가하기
     public synchronized void markeradder() {
 
+        Log.i(TAG, "markeradder");
         // 클러스터 매니저를 생성
-        ClusterManager<MarkerItem> mClusterManager = new ClusterManager<>(getActivity(), mGoogleMap);
+        mClusterManager = new ClusterManager<>(getActivity(), mGoogleMap);
         mGoogleMap.setOnCameraChangeListener(mClusterManager);
 
+        addItems();
+        mClusterManager.setRenderer(new OwnRendring(getActivity(), mGoogleMap, mClusterManager));
+    }
+
+    private void addItems() {
         String name;
         String address;
         String night;
-
 
         for (int i = 0; i < petHospitals.size(); i++) {
             name = petHospitals.get(i).getName();
@@ -664,100 +728,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                     MarkerIcon = BitmapDescriptorFactory.fromResource(R.drawable.footmarker1);
                     break;
             }
-            try {
-                mClusterManager.addItem(new MarkerItem(MarkerIcon, (getLocationFromAddress(getActivity(), address)), address, name, String.valueOf(i)));
-                mClusterManager.setRenderer(new OwnRendring(getActivity(), mGoogleMap, mClusterManager));
-            } catch (Exception e) {
-            }
+            mClusterManager.addItem(new MarkerItem(MarkerIcon, latLngs.get(i), address, name, String.valueOf(i)));
         }
-
-        // InfoWindow 클릭 시 Dialog 출력
-        mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                View customView = (View) View.inflate(getActivity(), R.layout.custom_dialog_material, null);
-
-                TextView tvAddress = (TextView) customView.findViewById(R.id.tv_address);
-                TextView tvPhone = (TextView) customView.findViewById(R.id.tv_phone);
-                TextView tvTime = (TextView) customView.findViewById(R.id.tv_time);
-                TextView tvWeb = (TextView) customView.findViewById(R.id.tv_web);
-
-                int getNum = Integer.parseInt(marker.getSnippet());
-
-                String shospitalName = petHospitals.get(getNum).getName();
-                String shospitalLocation = originAddress.get(getNum);
-                final String shospitalPhone = petHospitals.get(getNum).getPhone();
-                String time = petHospitals.get(getNum).getTime();
-                String night = petHospitals.get(getNum).getNight();
-                String homepage = petHospitals.get(getNum).getHomepage();
-
-                tvAddress.setText(shospitalLocation);
-
-                if (shospitalPhone.equals("null")) {
-                    tvPhone.setText("정보없음");
-                } else tvPhone.setText(shospitalPhone);
-
-                tvTime.setText(time);
-                if (homepage.equals("null")) {
-                    tvWeb.setText("-");
-                } else tvWeb.setText(homepage);
-
-                int color = 0;
-
-                switch (night) {
-                    case "T":
-                        color = R.color.colorNightTime;
-                        break;
-                    case "F":
-                        color = R.color.colorPrimary;
-                        break;
-                }
-                new MaterialStyledDialog.Builder(getActivity())
-                        .setTitle(shospitalName)
-                        .setCustomView(customView)
-                        .setStyle(Style.HEADER_WITH_TITLE)
-                        .setHeaderColor(color)
-                        .setCancelable(true)
-                        .withDialogAnimation(true)
-                        .withDarkerOverlay(true)
-                        .setPositiveText("전화걸기")
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                Uri uri = Uri.parse("tel:" + shospitalPhone);
-                                Intent intent = new Intent(Intent.ACTION_DIAL, uri);
-                                startActivity(intent);
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
-            }
-        });
-
-        mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-            @Override
-            public View getInfoWindow(Marker marker) {
-                // Getting view from the layout file info_window_layout
-                View v = (View) View.inflate(getActivity(), R.layout.custom_infowindow, null);
-
-                TextView tvName = (TextView) v.findViewById(R.id.tv_name);
-                // setting hospital Name
-                tvName.setText(marker.getTitle());
-
-                return v;
-            }
-
-            @Override
-            public View getInfoContents(Marker marker) {
-                return null;
-            }
-        });
     }
 
     // 클러스터 렌더링(마커 아이콘, 타이틀, 스니펫 등 지정)
     public class OwnRendring extends DefaultClusterRenderer<MarkerItem> {
-
         public OwnRendring(Context context, GoogleMap map,
                            ClusterManager<MarkerItem> clusterManager) {
             super(context, map, clusterManager);
@@ -767,9 +743,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             markerOptions.icon(item.getIcon());
             markerOptions.snippet(item.getSnippet());
             markerOptions.title(item.getTitle());
-            markerOptions.infoWindowAnchor(1f, 0f);
+            // markerOptions.visible(false);
+            //markerOptions.infoWindowAnchor(1f, 0f);
             super.onBeforeClusterItemRendered(item, markerOptions);
         }
+
     }
 
 }

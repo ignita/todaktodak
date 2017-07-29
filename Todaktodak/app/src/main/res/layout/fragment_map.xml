@@ -33,12 +33,24 @@
             android:orientation="horizontal">
 
             <TextView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="ALL"
+                android:textColor="@color/colorPrimary"/>
+
+            <TextView
                 android:id="@+id/tv_all"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="전체보기" />
         </LinearLayout>
+
+        <android.support.v4.widget.Space
+            android:layout_height="1dp"
+            android:layout_width="match_parent"
+            android:background="?android:attr/listDivider"/>
 
         <LinearLayout
             android:id="@+id/showNight"
@@ -47,11 +59,17 @@
             android:layout_gravity="center_horizontal">
 
             <TextView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:gravity="center_vertical|center_horizontal"
+                android:background="#C62828"/>
+
+            <TextView
                 android:id="@+id/tv_night"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical|center_horizontal"
-                android:text="야간진료병원"
+                android:text="야간진료"
                 android:textColor="#000" />
 
 

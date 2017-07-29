@@ -268,7 +268,6 @@ public class ThreeFragment extends Fragment {
                                     img_map.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            Toast.makeText(getActivity(), "지도보기", Toast.LENGTH_SHORT).show();
                                             dialog.dismiss();
                                             mainActivity = (MainActivity)getActivity();
                                             mainActivity.viewPager.setCurrentItem(0);

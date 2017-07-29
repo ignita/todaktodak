@@ -15,6 +15,7 @@ public class MarkerItem implements ClusterItem {
     private String title;
     private String snippet;
     BitmapDescriptor icon;
+
     public MarkerItem(BitmapDescriptor icon, LatLng location, String address, String title, String snippet) {
         this.icon = icon;
         this.location = location;
