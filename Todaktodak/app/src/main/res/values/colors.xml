@@ -5,5 +5,10 @@
     <color name="textColorPrimary">#FFFFFF</color>
     <color name="windowBackground">#FFFFFF</color>
     <color name="navigationBarColor">#000000</color>
-    <color name="colorAccent">#c8e8ff</color>
+    <color name="colorAccent">#FF4081</color>
+    <!--<color name="colorText">#c8e8ff</color>-->
+    <color name="colorText">#c5cae9</color>
+    <color name="colorNightTime">#C62828</color>
+
+    <color name="textSelected">#000000</color>
 </resources>

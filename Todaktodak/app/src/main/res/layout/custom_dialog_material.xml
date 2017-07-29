@@ -34,7 +34,6 @@
         android:drawableLeft="@drawable/dialog_time"
         android:drawablePadding="5dip"
         android:gravity="center_vertical"
-        android:text="이용 시간"
         android:textSize="15sp" />
 
     <TextView
@@ -44,7 +43,7 @@
         android:drawableLeft="@drawable/dialog_home"
         android:drawablePadding="5dip"
         android:gravity="center_vertical"
-        android:text="http:home.co.kr"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:autoLink="web"/>
 
 </LinearLayout>

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,10 +41,9 @@ import java.util.StringTokenizer;
 public class ThreeFragment extends Fragment {
 
     // Json Data URL
-    String JsonURL = "https://rawgit.com/the1994/todaktodak/master/pet.json";
+    String JsonURL = "https://raw.githubusercontent.com/the1994/todaktodak/master/pet.json";
     // Defining the Volley request queue that handles the URL request concurrently
     RequestQueue requestQueue;
-    View dialogView, dialogView_title;
 
     ArrayList<ArrayList<String>> hospitalAddress = null;
     final String[] arrProv = new String[]{"남구", "북구", "사상구", "사하구", "서구", "연제구", "영도구", "중구"};
@@ -55,7 +53,15 @@ public class ThreeFragment extends Fragment {
     List<Map<String, String>> provData = new ArrayList<>();
     List<List<Map<String, String>>> cityData = new ArrayList<>();
 
+    // 전체 주소(검색용x)
+    ArrayList<String> originAddress = new ArrayList<String>();
+
+    // 검색용 주소
+    ArrayList<String> searchAddress = new ArrayList<String>();
+
     ExpandableListView list;
+
+    MainActivity mainActivity;
 
 
     public ThreeFragment() {
@@ -68,6 +74,7 @@ public class ThreeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.i("googlemap","ThreeFragmentOnCreatView");
         View view = inflater.inflate(R.layout.fragment_three, container, false);
 
         // Volley, JSON 받아오기
@@ -120,15 +127,19 @@ public class ThreeFragment extends Fragment {
                                 String name = jsonObject.getString("name");
                                 String location = jsonObject.getString("location");
                                 String phone = jsonObject.getString("phone");
+                                String time = jsonObject.getString("time");
+                                String night = jsonObject.getString("night");
+                                String homepage = jsonObject.getString("homepage");
 
                                 num++;
 
                                 // 콤마 이후는 제외
                                 StringTokenizer tokens = new StringTokenizer(location);
 
-                                String searchAddress = tokens.nextToken("(");
+                                searchAddress.add(i, tokens.nextToken("("));
 
-                                petHospitals.add(i, new PetHospital(name, searchAddress, phone, num));
+                                petHospitals.add(i, new PetHospital(name, searchAddress.get(i), phone, num, time, night, homepage));
+                                originAddress.add(i, location);
 
 
                                 if (location.contains("남구")) {
@@ -196,6 +207,8 @@ public class ThreeFragment extends Fragment {
 
                                     TextView tvAddress = (TextView) customView.findViewById(R.id.tv_address);
                                     TextView tvPhone = (TextView) customView.findViewById(R.id.tv_phone);
+                                    TextView tvTime = (TextView) customView.findViewById(R.id.tv_time);
+                                    TextView tvWeb = (TextView) customView.findViewById(R.id.tv_web);
 
                                     int num = i;
                                     int sum = 0;
@@ -206,14 +219,28 @@ public class ThreeFragment extends Fragment {
                                     }
 
                                     // 병원 인덱스
-                                    int order = petHospitals.get(sum + i1).getNum()-1;
+                                    final int order = petHospitals.get(sum + i1).getNum()-1;
 
                                     String shospitalName = petHospitals.get(order).getName();
-                                    String shospitalLocation = petHospitals.get(order).getAddress();
+                                    final String shospitalLocation = originAddress.get(order);
                                     final String shospitalPhone = petHospitals.get(order).getPhone();
+                                    String time = petHospitals.get(order).getTime();
+                                    String night = petHospitals.get(order).getNight();
+                                    String homepage = petHospitals.get(order).getHomepage();
 
                                     tvAddress.setText(shospitalLocation);
-                                    tvPhone.setText(shospitalPhone);
+
+                                    if( shospitalPhone.equals("null")) {
+                                        tvPhone.setText("정보없음");
+                                    } else tvPhone.setText(shospitalPhone);
+
+                                    tvTime.setText(time);
+                                    if( homepage.equals("null"))
+                                    {
+                                        tvWeb.setText("-");
+                                    }
+                                    else tvWeb.setText(homepage);
+
 
                                     MaterialStyledDialog.Builder builder = new MaterialStyledDialog.Builder(getActivity());
                                     builder.setTitle(shospitalName)
@@ -242,6 +269,10 @@ public class ThreeFragment extends Fragment {
                                         @Override
                                         public void onClick(View view) {
                                             Toast.makeText(getActivity(), "지도보기", Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                            mainActivity = (MainActivity)getActivity();
+                                            mainActivity.viewPager.setCurrentItem(0);
+                                            ((MainActivity)getActivity()).putAddress(searchAddress.get(order));
                                         }
                                     });
                                     return false;
