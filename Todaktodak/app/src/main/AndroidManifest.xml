@@ -13,30 +13,32 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
     <meta-data android:name = "com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
 
-    <uses-library android:name="com.google.android.maps"/>
+
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_untitled"
+        android:icon="@mipmap/icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/MyMaterialTheme">
 
+        <uses-library android:name="com.google.android.maps"/>
         <!-- Google Map API -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCe-AtV1mmBQmz2Gn95VpzGuPoFMirnybc" />
+            android:value="@string/google_maps_api_key" />
 
-        <activity android:name=".MainActivity">
+        <!--<activity android:name=".MainActivity">-->
+        <activity
+            android:name=".Splash"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoadingActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:theme="@android:style/Theme.NoTitleBar"/>
+        <activity android:name=".MainActivity"/>
     </application>
 
 </manifest>

@@ -15,6 +15,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // 배포용 KEY
+            resValue "string","google_maps_key", "AIzaSyCe-AtV1mmBQmz2Gn95VpzGuPoFMirnybc"
+        }
+        debug {
+            resValue "string","google_maps_key", "AIzaSyCe-AtV1mmBQmz2Gn95VpzGuPoFMirnybc"
         }
     }
 }
@@ -36,4 +41,9 @@ dependencies {
     //compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+
+    compile 'com.pnikosis:materialish-progress:1.7'
+
+    compile 'com.github.dexafree:materiallist:3.2.1'
+
 }
