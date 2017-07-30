@@ -3,4 +3,10 @@
     <string name="one">지도보기</string>
     <string name="two">병원정보</string>
     <string name="three">병원목록</string>
+    <string name="google_maps_api_key">AIzaSyCe-AtV1mmBQmz2Gn95VpzGuPoFMirnybc"</string>
+
+    <string name="dobermman">당신은 능력 있는 사람입니다.\n충성심이 깊고, 도움이 많이 되는 동료입니다.\n하지만 적으로 두면 골치 아픈 존재입니다.</string>
+    <string name="gold">남에게 친절하고 성숙한 면을 지니고 있습니다.\n남과 잘 어울릴 줄 압니다.\n하지만 가끔은 자신보다 남을 먼저 생각해서\n스스로에게 압박을 많이 주는 성격입니다.</string>
+    <string name="cat">자신의 길을 따르는 것을 좋아하고\n주변의 변화에도 크게 영향 받지 않습니다.\n개성이 강하고,\n가끔은 자신만의 세계 속에 사는 것처럼 보이지만\n그 때문에 많은 사람들이 당신에게 매력을 느낍니다.</string>
+    <string name="poodle">어린 면이 많아서 가끔은 불평도 많이 합니다.\n하지만 주위 사람들에게 즐거움을 주고\n타인으로 하여금 보호본능을 자극하는 사람입니다.</string>
 </resources>

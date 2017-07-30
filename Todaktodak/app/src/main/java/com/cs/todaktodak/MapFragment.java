@@ -98,6 +98,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     ArrayList<PetHospital> petHospitals = new ArrayList<PetHospital>();
     ArrayList<String> originalAddress = new ArrayList<String>();
+    ArrayList<LatLng> latLngs = new ArrayList<LatLng>();
 
     ConnectionClass connectionClass;
 
@@ -614,6 +615,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
                     petHospitals.add(i, new PetHospital(name, searchAddress, phone, num, time, night, web));
                     originalAddress.add(i, address);
+                    //latLngs.add(i, getLocationFromAddress(getActivity(), searchAddress));
                 }
                 markeradder();
                 notify();
@@ -627,6 +629,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     // 마커 추가하기
     public synchronized void markeradder() {
         Log.i(TAG, "markeradder()");
+        Toast.makeText(getActivity(), "잠시만 기다려주세요!", Toast.LENGTH_LONG).show();
         // 클러스터 매니저를 생성
         ClusterManager<MarkerItem> mClusterManager = new ClusterManager<>(getActivity(), mGoogleMap);
         mGoogleMap.setOnCameraChangeListener(mClusterManager);
@@ -650,8 +653,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                     break;
             }
 
+            List<Address> addr;
+
+            LatLng latLng = getLocationFromAddress(getActivity(), address);
             try {
-                mClusterManager.addItem(new MarkerItem(icon, (getLocationFromAddress(getActivity(), address)), address, name, String.valueOf(i)));
+                mClusterManager.addItem(new MarkerItem(icon, latLng, address, name, String.valueOf(i)));
                 mClusterManager.setRenderer(new OwnRendring(getActivity(), mGoogleMap, mClusterManager));
             } catch (Exception e) {
             }
@@ -721,15 +727,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         });
 
         mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            View v;
             @Override
             public View getInfoWindow(Marker marker) {
                 // Getting view from the layout file info_window_layout
-                View v = (View) View.inflate(getActivity(), R.layout.custom_infowindow, null);
+                if(marker.getTitle() != null) {
+                     v = (View) View.inflate(getActivity(), R.layout.custom_infowindow, null);
 
-                TextView tvName = (TextView) v.findViewById(R.id.tv_name);
-                // setting hospital Name
-                tvName.setText(marker.getTitle());
-
+                    TextView tvName = (TextView) v.findViewById(R.id.tv_name);
+                    // setting hospital Name
+                    tvName.setText(marker.getTitle());
+                }
                 return v;
             }
 

@@ -9,6 +9,7 @@
     <!--<color name="colorText">#c8e8ff</color>-->
     <color name="colorText">#c5cae9</color>
     <color name="colorNightTime">#C62828</color>
-
-    <color name="textSelected">#000000</color>
+    <!--<color name="textSelected">#000000</color>-->
+    <color name="choose">#4f83cc</color>
+    <color name="cardBack">#002f6c</color>
 </resources>
