@@ -655,6 +655,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
             List<Address> addr;
 
+
             LatLng latLng = getLocationFromAddress(getActivity(), address);
             try {
                 mClusterManager.addItem(new MarkerItem(icon, latLng, address, name, String.valueOf(i)));
@@ -668,76 +669,79 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
             @Override
             public void onInfoWindowClick(Marker marker) {
-                View customView = (View) View.inflate(getActivity(), R.layout.custom_dialog_material, null);
 
-                TextView tvAddress = (TextView) customView.findViewById(R.id.tv_address);
-                TextView tvPhone = (TextView) customView.findViewById(R.id.tv_phone);
-                TextView tvTime = (TextView) customView.findViewById(R.id.tv_time);
-                TextView tvWeb = (TextView) customView.findViewById(R.id.tv_web);
+                try {
+                    View customView = (View) View.inflate(getActivity(), R.layout.custom_dialog_material, null);
 
-                int getNum = Integer.parseInt(marker.getSnippet());
+                    TextView tvAddress = (TextView) customView.findViewById(R.id.tv_address);
+                    TextView tvPhone = (TextView) customView.findViewById(R.id.tv_phone);
+                    TextView tvTime = (TextView) customView.findViewById(R.id.tv_time);
+                    TextView tvWeb = (TextView) customView.findViewById(R.id.tv_web);
 
-                String shospitalName = petHospitals.get(getNum).getName();
-                String shospitalLocation = petHospitals.get(getNum).getAddress();
-                final String shospitalPhone = petHospitals.get(getNum).getPhone();
-                String night = petHospitals.get(getNum).getNight();
-                String time = petHospitals.get(getNum).getTime();
-                String web = petHospitals.get(getNum).getHomepage();
+                    int getNum = Integer.parseInt(marker.getSnippet());
 
-                tvAddress.setText(originalAddress.get(getNum));
+                    String shospitalName = petHospitals.get(getNum).getName();
+                    String shospitalLocation = petHospitals.get(getNum).getAddress();
+                    final String shospitalPhone = petHospitals.get(getNum).getPhone();
+                    String night = petHospitals.get(getNum).getNight();
+                    String time = petHospitals.get(getNum).getTime();
+                    String web = petHospitals.get(getNum).getHomepage();
 
-                if (shospitalPhone.equals("null")) {
-                    tvPhone.setText("정보없음");
-                } else tvPhone.setText(shospitalPhone);
+                    tvAddress.setText(originalAddress.get(getNum));
 
-                tvTime.setText(time);
-                if (web.equals("null")) {
-                    tvWeb.setText("-");
-                } else tvWeb.setText(web);
+                    if (shospitalPhone.equals("null")) {
+                        tvPhone.setText("정보없음");
+                    } else tvPhone.setText(shospitalPhone);
 
-                int headerColor = 0;
-                switch (night) {
-                    case "T":
-                        headerColor = R.color.colorNightTime;
-                        break;
-                    case "F":
-                        headerColor = R.color.colorPrimary;
-                        break;
+                    tvTime.setText(time);
+                    if (web.equals("null")) {
+                        tvWeb.setText("-");
+                    } else tvWeb.setText(web);
+
+                    int headerColor = 0;
+                    switch (night) {
+                        case "T":
+                            headerColor = R.color.colorNightTime;
+                            break;
+                        case "F":
+                            headerColor = R.color.colorPrimary;
+                            break;
+                    }
+                    new MaterialStyledDialog.Builder(getActivity())
+                            .setTitle(shospitalName)
+                            .setCustomView(customView)
+                            .setStyle(Style.HEADER_WITH_TITLE)
+                            .setHeaderColor(headerColor)
+                            .setCancelable(true)
+                            .withDialogAnimation(true)
+                            .withDarkerOverlay(true)
+                            .setPositiveText("전화걸기")
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    Uri uri = Uri.parse("tel:" + shospitalPhone);
+                                    Intent intent = new Intent(Intent.ACTION_DIAL, uri);
+                                    startActivity(intent);
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
+                } catch (NumberFormatException e) {
+                    Toast.makeText(getActivity(), "병원 마커의 이름을 선택해주세요.", Toast.LENGTH_SHORT).show();
                 }
-                new MaterialStyledDialog.Builder(getActivity())
-                        .setTitle(shospitalName)
-                        .setCustomView(customView)
-                        .setStyle(Style.HEADER_WITH_TITLE)
-                        .setHeaderColor(headerColor)
-                        .setCancelable(true)
-                        .withDialogAnimation(true)
-                        .withDarkerOverlay(true)
-                        .setPositiveText("전화걸기")
-                        .onPositive(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                Uri uri = Uri.parse("tel:" + shospitalPhone);
-                                Intent intent = new Intent(Intent.ACTION_DIAL, uri);
-                                startActivity(intent);
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
             }
         });
 
         mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-            View v;
+
+
             @Override
             public View getInfoWindow(Marker marker) {
                 // Getting view from the layout file info_window_layout
-                if(marker.getTitle() != null) {
-                     v = (View) View.inflate(getActivity(), R.layout.custom_infowindow, null);
-
-                    TextView tvName = (TextView) v.findViewById(R.id.tv_name);
-                    // setting hospital Name
-                    tvName.setText(marker.getTitle());
-                }
+                View v = (View) View.inflate(getActivity(), R.layout.custom_infowindow, null);
+                TextView tvName = (TextView) v.findViewById(R.id.tv_name);
+                // setting hospital Name
+                tvName.setText(marker.getTitle());
                 return v;
             }
 
@@ -763,6 +767,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             markerOptions.infoWindowAnchor(1f, 0f);
             super.onBeforeClusterItemRendered(item, markerOptions);
         }
+
     }
 
 }
