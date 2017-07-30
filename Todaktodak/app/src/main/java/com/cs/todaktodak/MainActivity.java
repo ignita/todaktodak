@@ -1,10 +1,6 @@
 package com.cs.todaktodak;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,15 +13,12 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,23 +30,20 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     ViewPager viewPager;
 
-    String getAddress = null;
+    LatLng getAddress = null;
 
     // 뒤로가기 버튼 변수
     private final long FINSH_INTERVAL_TIME = 2000;
     private long backPressedTime = 0;
 
-    View customView;
-    LayoutInflater inflater;
 
-    public String getAddress() {
-        String t = getAddress;
+    public LatLng getAddress() {
+        LatLng t = getAddress;
         return t;
     }
 
-    public void putAddress(String address) {
-        getAddress = address;
-        Log.i("ggg4", getAddress);
+    public void putAddress(LatLng latLng) {
+        getAddress = latLng;
     }
 
     @Override
@@ -61,9 +51,6 @@ public class MainActivity extends AppCompatActivity {
         Log.i("googlemap", "MainActivity_onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Intent intent = new Intent(this, LoadingActivity.class);
-        startActivity(intent);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -100,11 +87,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        customView = inflater.inflate(R.layout.custom_dialog_info, null);
-
-        TextView tvVersion = (TextView) customView.findViewById(R.id.version);
-        TextView tvDev = (TextView) customView.findViewById(R.id.developer);
     }
 
     // 뒤로 가기 버튼으로 종료하기
@@ -134,28 +116,21 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_info:
                 new MaterialStyledDialog.Builder(this)
                         .setTitle("애플리케이션 정보")
+                        .setDescription("버전: 1.0\n개발: 최연정 김예은 박혜민")
                         .setStyle(Style.HEADER_WITH_ICON)
                         .setCancelable(true)
-                        .setCustomView(customView)
                         .setHeaderColor(R.color.colorPrimary)
                         .withDialogAnimation(true)
                         .withDarkerOverlay(true)
                         .setIcon(R.drawable.app)
                         .withIconAnimation(true)
-                        .setNegativeText("닫기")
-                        .onNegative(new MaterialDialog.SingleButtonCallback() {
-                            @Override
-                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                dialog.dismiss();
-                            }
-                        })
                         .show();
                 return true;
             case R.id.quit:
                 finish();
                 return true;
         }
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     private void setupTabIcons() {
