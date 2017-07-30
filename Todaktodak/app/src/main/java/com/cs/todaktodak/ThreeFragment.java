@@ -14,15 +14,15 @@ import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.javiersantos.materialstyleddialogs.MaterialStyledDialog;
 import com.github.javiersantos.materialstyleddialogs.enums.Style;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 /**
  * Created by yjchoi on 2017. 7. 17..
@@ -41,7 +40,7 @@ import java.util.StringTokenizer;
 public class ThreeFragment extends Fragment {
 
     // Json Data URL
-    String JsonURL = "https://raw.githubusercontent.com/the1994/todaktodak/master/pet.json";
+    String JsonURL = "https://raw.githubusercontent.com/the1994/todaktodak/master/petHospitals.json";
     // Defining the Volley request queue that handles the URL request concurrently
     RequestQueue requestQueue;
 
@@ -49,18 +48,18 @@ public class ThreeFragment extends Fragment {
     final String[] arrProv = new String[]{"남구", "북구", "사상구", "사하구", "서구", "연제구", "영도구", "중구"};
 
     ArrayList<PetHospital> petHospitals = new ArrayList<PetHospital>();
+    ArrayList<LatLng> latLngs = new ArrayList<LatLng>();
 
     List<Map<String, String>> provData = new ArrayList<>();
     List<List<Map<String, String>>> cityData = new ArrayList<>();
 
-    // 전체 주소(검색용x)
-    ArrayList<String> originAddress = new ArrayList<String>();
-
-    // 검색용 주소
-    ArrayList<String> searchAddress = new ArrayList<String>();
+    // JSON에 lat, lon이 없을 때
+//    // 전체 주소(검색용x)
+//    ArrayList<String> originAddress = new ArrayList<String>();
+//    // 검색용 주소
+//    ArrayList<String> searchAddress = new ArrayList<String>();
 
     ExpandableListView list;
-
     MainActivity mainActivity;
 
 
@@ -74,7 +73,7 @@ public class ThreeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i("googlemap","ThreeFragmentOnCreatView");
+        Log.i("googlemap", "ThreeFragmentOnCreatView");
         View view = inflater.inflate(R.layout.fragment_three, container, false);
 
         // Volley, JSON 받아오기
@@ -85,19 +84,19 @@ public class ThreeFragment extends Fragment {
 
         // Creating the JsonArrayRequest class called arrayreq, passing the required parameters
         //JsonURL is the URL to be fetched from
-        JsonArrayRequest arrayreq = new JsonArrayRequest(JsonURL,
+        JsonObjectRequest arrayreq = new JsonObjectRequest(JsonURL,
                 // The second parameter Listener overrides the method onResponse() and passes
                 //JSONArray as a parameter
-                new Response.Listener<JSONArray>() {
+                new Response.Listener<JSONObject>() {
 
                     // Takes the response from the JSON request
                     @Override
-                    public void onResponse(JSONArray response) {
+                    public void onResponse(JSONObject response) {
                         try {
-                            // Retrieves first JSON object in outer array
-                            JSONObject hospitalObj = response.getJSONObject(0);
-                            // Retrieves "petHospital" from the JSON object
-                            final JSONArray hospitalArry = hospitalObj.getJSONArray("petHospital");
+//                            // Retrieves first JSON object in outer array
+//                            JSONObject hospitalObj = response.getJSONObject(0);
+//                            // Retrieves "petHospital" from the JSON object
+                            final JSONArray hospitalArry = response.getJSONArray("petHospital");
                             // Iterates through the JSON Array getting objects and adding them
                             //to the list view until there are no more objects in hospitalArray
 
@@ -129,17 +128,24 @@ public class ThreeFragment extends Fragment {
                                 String phone = jsonObject.getString("phone");
                                 String time = jsonObject.getString("time");
                                 String night = jsonObject.getString("night");
-                                String homepage = jsonObject.getString("homepage");
+                                String web = jsonObject.getString("homepage");
+                                double lat = Double.parseDouble(jsonObject.getString("latitude"));
+                                double lon = Double.parseDouble(jsonObject.getString("longitude"));
+
+                                latLngs.add(new LatLng(lat, lon));
+
+                                petHospitals.add(i, new PetHospital(name, location, phone, num, time, night, web, latLngs.get(i)));
 
                                 num++;
 
+                                // JSON에 lat, long이 없을 때
                                 // 콤마 이후는 제외
-                                StringTokenizer tokens = new StringTokenizer(location);
-
-                                searchAddress.add(i, tokens.nextToken("("));
-
-                                petHospitals.add(i, new PetHospital(name, searchAddress.get(i), phone, num, time, night, homepage));
-                                originAddress.add(i, location);
+//                                StringTokenizer tokens = new StringTokenizer(location);
+//
+//                                searchAddress.add(i, tokens.nextToken("("));
+//
+//                                petHospitals.add(i, new PetHospital(name, searchAddress.get(i), phone, num, time, night, homepage));
+//                                originAddress.add(i, location);
 
 
                                 if (location.contains("남구")) {
@@ -219,34 +225,41 @@ public class ThreeFragment extends Fragment {
                                     }
 
                                     // 병원 인덱스
-                                    final int order = petHospitals.get(sum + i1).getNum()-1;
+                                    final int order = petHospitals.get(sum + i1).getNum();
 
-                                    String shospitalName = petHospitals.get(order).getName();
-                                    final String shospitalLocation = originAddress.get(order);
-                                    final String shospitalPhone = petHospitals.get(order).getPhone();
+                                    String name = petHospitals.get(order).getName();
+                                    final String address = petHospitals.get(order).getAddress();
+                                    final String phone = petHospitals.get(order).getPhone();
                                     String time = petHospitals.get(order).getTime();
                                     String night = petHospitals.get(order).getNight();
-                                    String homepage = petHospitals.get(order).getHomepage();
+                                    String web = petHospitals.get(order).getHomepage();
 
-                                    tvAddress.setText(shospitalLocation);
+                                    tvAddress.setText(address);
 
-                                    if( shospitalPhone.equals("null")) {
+                                    if (phone.equals("null")) {
                                         tvPhone.setText("정보없음");
-                                    } else tvPhone.setText(shospitalPhone);
+                                    } else tvPhone.setText(phone);
 
                                     tvTime.setText(time);
-                                    if( homepage.equals("null"))
-                                    {
+                                    if (web.equals("null")) {
                                         tvWeb.setText("-");
-                                    }
-                                    else tvWeb.setText(homepage);
+                                    } else tvWeb.setText(web);
 
+                                    int headerColor = 0;
+                                    switch (night) {
+                                        case "T":
+                                            headerColor = R.color.colorNightTime;
+                                            break;
+                                        case "F":
+                                            headerColor = R.color.colorPrimary;
+                                            break;
+                                    }
 
                                     MaterialStyledDialog.Builder builder = new MaterialStyledDialog.Builder(getActivity());
-                                    builder.setTitle(shospitalName)
+                                    builder.setTitle(name)
                                             .setCustomView(customView)
                                             .setStyle(Style.HEADER_WITH_TITLE)
-                                            .setHeaderColor(R.color.colorPrimary)
+                                            .setHeaderColor(headerColor)
                                             .setCancelable(true)
                                             .withDialogAnimation(true)
                                             .withDarkerOverlay(true);
@@ -259,7 +272,7 @@ public class ThreeFragment extends Fragment {
                                     img_phone.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
-                                            Uri uri = Uri.parse("tel:" + shospitalPhone);
+                                            Uri uri = Uri.parse("tel:" + phone);
                                             Intent intent = new Intent(Intent.ACTION_DIAL, uri);
                                             startActivity(intent);
                                             dialog.dismiss();
@@ -269,9 +282,11 @@ public class ThreeFragment extends Fragment {
                                         @Override
                                         public void onClick(View view) {
                                             dialog.dismiss();
-                                            mainActivity = (MainActivity)getActivity();
+                                            mainActivity = (MainActivity) getActivity();
                                             mainActivity.viewPager.setCurrentItem(0);
-                                            ((MainActivity)getActivity()).putAddress(searchAddress.get(order));
+
+                                            ((MainActivity) getActivity()).putAddress(latLngs.get(order));
+//                                            ((MainActivity) getActivity()).putAddress(searchAddress.get(order));
                                         }
                                     });
                                     return false;
