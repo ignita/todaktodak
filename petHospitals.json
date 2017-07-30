@@ -6,7 +6,9 @@
          "phone":"051-634-4017",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.136426,
+         "longitude":129.071843
       },
       {
          "name":"용호 동물병원",
@@ -14,7 +16,9 @@
          "phone":"051-628-0855",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.121434,
+         "longitude":129.112505
       },
       {
          "name":"우암 동물병원",
@@ -22,7 +26,9 @@
          "phone":"051-636-5242",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.122247,
+         "longitude":129.082245
       },
       {
          "name":"25시 동물병원",
@@ -30,7 +36,9 @@
          "phone":"051-635-0402",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.136483,
+         "longitude":129.071392
       },
       {
          "name":"튼튼 동물병원",
@@ -38,7 +46,9 @@
          "phone":"051-621-7555",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.138141,
+         "longitude":129.102118
       },
       {
          "name":"메트로 동물병원",
@@ -46,7 +56,9 @@
          "phone":"051-623-7588",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.128334,
+         "longitude":129.10695
       },
       {
          "name":"조양래 동물의료센터",
@@ -54,7 +66,9 @@
          "phone":"051-621-8880",
          "time":"00:00~24:00",
          "night":"T",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.134903,
+         "longitude":129.091159
       },
       {
          "name":"(주)다솜 동물병원",
@@ -62,7 +76,9 @@
          "phone":"051-632-7580",
          "time":"평일09:30~20:00\r\n공휴일09:30~18:00\r\n토요일09:30~18:00\r\n일요일11:00~18:00 (1층에서만 진료)",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.137434,
+         "longitude":129.069282
       },
       {
          "name":"다솜고양이메디컬센터",
@@ -70,7 +86,9 @@
          "phone":"051-636-7582",
          "time":"평일10:00~19:30",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.137434,
+         "longitude":129.069282
       },
       {
          "name":"펫프랜즈 동물병원",
@@ -78,7 +96,9 @@
          "phone":"051-636-0148",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.144384,
+         "longitude":129.064254
       },
       {
          "name":"대연 동물병원",
@@ -86,23 +106,29 @@
          "phone":"051-647-2758",
          "time":"평일09:30~19:00\r\n공휴일09:30~17:00\r\n토요일09:00~17:00",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.134893,
+         "longitude":129.084057
       },
       {
          "name":"봄빛동물종합병원",
-         "location":"부산광역시 남구 용호로 48(용호동)\r\n대성빌딩 2층",
+         "location":"부산광역시 남구 용호로 48(용호동) 대성빌딩 2층",
          "phone":"051-612-2289",
-         "time":"주간진료9:30-19:00\r\n야간진료20:00~",
+         "time":"주간진료9:30-19:00 야간진료20:00~",
          "night":"T",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.126481,
+         "longitude":129.109203
       },
       {
          "name":"자이안트동물병원",
-         "location":"부산광역시 남구 분포로 111 (용호동)\r\nLG메트로시티 상가 1003동 304호",
+         "location":"부산광역시 남구 분포로 111 (용호동) LG메트로시티 상가 1003동 304호",
          "phone":"051-646-7582",
          "time":"평일09:00~20:00\r\n공휴일10:00~18:00\r\n토요일09:00~18:00\r\n일요일10:00~18:00 예약진료",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.126762,
+         "longitude":129.109685
       },
       {
          "name":"해온동물병원",
@@ -110,7 +136,9 @@
          "phone":"051-612-7552",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.111492,
+         "longitude":129.111226
       },
       {
          "name":"지경희동물병원",
@@ -118,23 +146,29 @@
          "phone":"051-714-0220",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.114524,
+         "longitude":129.111206
       },
       {
          "name":"헬로동물병원",
-         "location":"부산광역시 남구 용호1동 분포로 115 김성미소아청소년과의원(힐탑탑플레이스 A동 403호)",
+         "location":"부산광역시 남구 분포로 115 힐탑탑플레이스 A동 403호(용호동)",
          "phone":"051-627-1275",
          "time":"매일00:00~24:00 응급진료\r\n평일09:30~22:00 외래\r\n공휴일09:30~19:00 외래\r\n일요일09:30~16:00 외래",
          "night":"T",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.13208,
+         "longitude":129.112824
       },
       {
          "name":"다온 동물병원",
-         "location":"부산광역시 남구 대연동 49-4 (115동 206호, 대연힐스테이트 푸르지오)",
+         "location":"부산광역시 남구 수영로 345 (115동 206호대연힐스테이트 푸르지오)",
          "phone":"051-622-2171",
-         "time":"평일09:30~19:00\r\n월요일09:30~21:00\r\n목요일09:30~21:00\r\n토요일09:30~18:00\n",
+         "time":"평일09:30~19:00\r\n월요일09:30~21:00\r\n목요일09:30~21:00\r\n토요일09:30~18:00",
          "night":"T",
-         "homepage":"http://www.daonac.co.kr\r\nhttp://blog.naver.com/daon2171"
+         "homepage":"http://www.daonac.co.kr/\r\nhttp://blog.naver.com/daon2171",
+         "latitude":35.139813,
+         "longitude":129.102983
       },
       {
          "name":"유앤동물의료센터",
@@ -142,15 +176,19 @@
          "phone":"051-624-2475",
          "time":"평일10:00~21:00 주간진료\r\n평일21:00~09:00 응급진료",
          "night":"T",
-         "homepage":"http://blog.naver.com/pcr39\r\nhttp://unah.modoo.at/"
+         "homepage":"http://blog.naver.com/pcr39\r\nhttp://unah.modoo.at/",
+         "latitude":35.135348,
+         "longitude":129.090765
       },
       {
-         "name":"덕천동물의료센터",
-         "location":"부산광역시 북구 만덕대로 119 (덕천동)",
+         "name":"덕천동물병원",
+         "location":"부산광역시 북구 만덕대로 88 (덕천동)",
          "phone":"051-332-8060",
          "time":"평일9:30~20:00\r\n토요일9:30~18:00\r\n공휴일9:30~18:00",
          "night":"F",
-         "homepage":"http://blog.naver.com/r882521"
+         "homepage":"http://blog.naver.com/r882521",
+         "latitude":35.213454,
+         "longitude":129.018047
       },
       {
          "name":"구포동물병원",
@@ -158,23 +196,29 @@
          "phone":"051-332-5688",
          "time":"평일10:00~19:00\r\n토요일10:00~17:00\r\n일요일휴무",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.202679,
+         "longitude":128.993718
       },
       {
          "name":"백양동물병원",
-         "location":"부산광역시 북구 덕천로 280 (만덕동)",
+         "location":"부산광역시 북구 덕천로 290 (만덕동)",
          "phone":"051-342-0010",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.209576,
+         "longitude":129.035441
       },
       {
          "name":"노아동물병원",
-         "location":"부산광역시 북구 화명1동 947-1(부산광역시 북구 금곡대로 175, 상가207동 201호, 화명2차동원로얄듀크)",
+         "location":"부산광역시 북구 금곡대로 175 (상가207동 201호, 화명2차동원로얄듀크)",
          "phone":"051-343-7588",
          "time":"평일09:00~19:00\r\n공휴일09:00~17:30\r\n토요일09:00~17:30(일요일휴무)",
          "night":"F",
-         "homepage":"http://blog.naver.com/vetnoah"
+         "homepage":"http://blog.naver.com/vetnoah",
+         "latitude":35.224277,
+         "longitude":129.009256
       },
       {
          "name":"원동물병원",
@@ -182,7 +226,9 @@
          "phone":"051-333-7584",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.234264,
+         "longitude":129.013437
       },
       {
          "name":"21세기종합동물병원",
@@ -190,7 +236,9 @@
          "phone":"051-365-0075",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.210764,
+         "longitude":129.008799
       },
       {
          "name":"장원동물병원",
@@ -198,7 +246,9 @@
          "phone":"051-335-9023",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.205361,
+         "longitude":129.004627
       },
       {
          "name":"차동물병원",
@@ -206,7 +256,9 @@
          "phone":"051-331-7582",
          "time":"평일 10:00~18:00\r\n토요일 10:00~17:00\r\n공휴일 10:00~16:00\r\n일요일 휴무",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.235485,
+         "longitude":129.014101
       },
       {
          "name":"행복한동물병원",
@@ -214,7 +266,9 @@
          "phone":"051-363-7593",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.239122,
+         "longitude":129.014504
       },
       {
          "name":"화명동물병원",
@@ -222,7 +276,9 @@
          "phone":"051-364-4386",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.229552,
+         "longitude":129.012994
       },
       {
          "name":"만덕24시동물병원",
@@ -230,7 +286,9 @@
          "phone":"051-704-3690",
          "time":"평일09:30~19:00\r\n일요일휴무\r\n토요일09:30~17:00",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.210816,
+         "longitude":129.028986
       },
       {
          "name":"카이저 동물병원",
@@ -238,7 +296,9 @@
          "phone":"051-361-7599",
          "time":"평일09:30~19:00\r\n공휴일09:30~17:00\r\n토요일09:30~17:00",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.225049,
+         "longitude":129.010248
       },
       {
          "name":"그랜드 동물병원",
@@ -246,7 +306,9 @@
          "phone":"051-365-7588",
          "time":"매일09:30~20:30 호텔, 놀이터 이용\r\n매일10:00~21:00 점심시간 12:00-13:00\r\n매일10:00~17:00 미용(예약필수)\r\n일요일10:00~19:00",
          "night":"T",
-         "homepage":"http://blog.naver.com/gac365"
+         "homepage":"http://blog.naver.com/gac365",
+         "latitude":35.247621,
+         "longitude":129.012642
       },
       {
          "name":"하나동물병원",
@@ -254,7 +316,9 @@
          "phone":"051-337-0975",
          "time":"평일10:00~20:00 (점심시간13:00~14:00)\r\n주말10:00~20:00 (점심시간13:00~14:00)\r\n공휴일10:00~20:00 (점심시간13:00~14:00)\r\n목요일휴무",
          "night":"F",
-         "homepage":"http://hanaah0975.blog.me/"
+         "homepage":"http://hanaah0975.blog.me/",
+         "latitude":35.250034,
+         "longitude":129.011245
       },
       {
          "name":"해든동물병원",
@@ -262,7 +326,9 @@
          "phone":"051-343-3834",
          "time":"일요일휴무\r\n평일10:00~19:00\r\n공휴일10:00~17:00\r\n토요일10:00~17:00",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.199564,
+         "longitude":128.99671
       },
       {
          "name":"사상동물병원",
@@ -270,7 +336,9 @@
          "phone":"051-322-3026",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.159445,
+         "longitude":128.987138
       },
       {
          "name":"주례동물병원",
@@ -278,7 +346,9 @@
          "phone":"051-313-2559",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.150077,
+         "longitude":129.000941
       },
       {
          "name":"신병헌동물병원",
@@ -286,7 +356,9 @@
          "phone":"051-304-6455",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.168206,
+         "longitude":128.981961
       },
       {
          "name":"모라동물병원",
@@ -294,7 +366,9 @@
          "phone":"051-325-1638",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.191679,
+         "longitude":128.991992
       },
       {
          "name":"대성동물병원",
@@ -302,7 +376,9 @@
          "phone":"051-317-7558",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.149294,
+         "longitude":129.004603
       },
       {
          "name":"개금동물병원",
@@ -310,7 +386,9 @@
          "phone":"051-324-9954",
          "time":"매일09:30~18:30\r\n진료시간 12~18/주말 12~16",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.151626,
+         "longitude":129.012848
       },
       {
          "name":"엄궁종합동물병원",
@@ -318,7 +396,9 @@
          "phone":"051-316-7596",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.132165,
+         "longitude":128.973176
       },
       {
          "name":"팻프랜즈동물병원",
@@ -326,7 +406,9 @@
          "phone":"051-312-7575",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.164238,
+         "longitude":128.978905
       },
       {
          "name":"고은동물병원",
@@ -334,15 +416,19 @@
          "phone":"051-311-7578",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.186501,
+         "longitude":128.991291
       },
       {
          "name":"쿨펫동물병원",
-         "location":"부산광역시 사상구 엄궁동 롯데마트 사상점(2층)",
+         "location":"부산광역시 사상구 엄궁동 롯데마트사상 (2층)",
          "phone":"051-266-5582",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.127595,
+         "longitude":128.968375
       },
       {
          "name":"학장동물병원",
@@ -350,7 +436,9 @@
          "phone":"051-312-7555",
          "time":"일요일11:30~12:30\r\n평일09:30~19:00\r\n토요일09:30~17:00",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.140106,
+         "longitude":128.981411
       },
       {
          "name":"사하종합동물병원",
@@ -358,15 +446,19 @@
          "phone":"051-206-1891",
          "time":"평일9:40~17:40\r\n토요일9:40~17:00\r\n일요일10:00~17:00\r\n공휴일10:00~17:00\r\n야간응급진료 주간진료\r\n마감시간~밤12:00\r\n점심시간12:30~14:00",
          "night":"T",
-         "homepage":"http://blog.naver.com/2021891\n\nhttp://sahaamc1992.modoo.at/"
+         "homepage":"http://blog.naver.com/2021891\\r\n\nhttp://sahaamc1992.modoo.at/",
+         "latitude":35.101538,
+         "longitude":128.978898
       },
       {
-         "name":"박 동물병원",
+         "name":"박 동물종합병원",
          "location":"부산광역시 사하구 낙동대로 407 (당리동)",
          "phone":"051-202-4964",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.103343,
+         "longitude":128.973614
       },
       {
          "name":"염동물병원",
@@ -374,7 +466,9 @@
          "phone":"051-292-3690",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.094621,
+         "longitude":128.993842
       },
       {
          "name":"나은 동물병원",
@@ -382,15 +476,19 @@
          "phone":"051-264-7584",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.079872,
+         "longitude":128.977085
       },
       {
          "name":"참조은 동물병원",
-         "location":"부산광역시 사하구 낙동대로 295-1 (괴정동)",
+         "location":"부산광역시 사하구 낙동대로 295 (괴정동)",
          "phone":"null",
-         "time":"-",
+         "time":"null",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.099283,
+         "longitude":128.984771
       },
       {
          "name":"장 동물병원",
@@ -398,31 +496,39 @@
          "phone":"051-262-7582",
          "time":"일요일휴무\\n공휴일 토요일 17:00시까지 근무",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.058858,
+         "longitude":128.97021
       },
       {
          "name":"하단동물병원",
-         "location":"부산광역시 사하구 하신중앙로 296 (하단동)",
+         "location":"부산광역시 사하구 하신중앙로 302-1 (하단동)",
          "phone":"051-291-4456",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.103861,
+         "longitude":128.963736
       },
       {
          "name":"예원동물병원",
          "location":"부산광역시 사하구 다송로72번길 63 (다대동)",
          "phone":"null",
-         "time":"-",
+         "time":"null",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.060092,
+         "longitude":128.980948
       },
       {
          "name":"쿨펫 동물병원",
-         "location":"부산광역시 사하구 을숙도대로 610 (장림동)",
+         "location":"부산광역시 사하구 을숙도대로 610 (장림동, 롯데마트 3층)",
          "phone":"051-264-8275",
          "time":"매일10:00~22:00",
          "night":"F",
-         "homepage":"http://blog.naver.com/jojingyuah"
+         "homepage":"http://blog.naver.com/jojingyuah",
+         "latitude":35.084884,
+         "longitude":128.971555
       },
       {
          "name":"한솔동물병원",
@@ -430,7 +536,9 @@
          "phone":"051-201-0475",
          "time":"전화문의",
          "night":"F",
-         "homepage":""
+         "homepage":"",
+         "latitude":35.10159,
+         "longitude":128.996204
       },
       {
          "name":"스마트동물병원",
@@ -438,7 +546,9 @@
          "phone":"051-261-1891",
          "time":"평일09:30~19:00\r\n공휴일09:30~16:00\r\n토요일09:30~16:00\r\n일요일휴무",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.050891,
+         "longitude":128.970313
       },
       {
          "name":"다대동물병원",
@@ -446,31 +556,39 @@
          "phone":"051-266-7582",
          "time":"평일09:30~19:00\r\n토요일09:30~17:30 일요일휴무",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.057285,
+         "longitude":128.971285
       },
       {
          "name":"괴정동물병원",
-         "location":"부산광역시 사하구 낙동대로250번안길 15 (괴정동)",
+         "location":"부산광역시 사하구 낙동대로 246-1 (괴정동)",
          "phone":"051-207-3344",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.099485,
+         "longitude":128.990068
       },
       {
          "name":"부산야생동물치료센터",
          "location":"부산광역시 사하구 낙동남로 1240 (하단동)",
          "phone":"null",
-         "time":"-",
+         "time":"null",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.105657,
+         "longitude":128.943265
       },
       {
          "name":"신성동물병원",
          "location":"부산광역시 사하구 낙동대로 194 (괴정동)",
          "phone":"null",
-         "time":"-",
+         "time":"null",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.101203,
+         "longitude":128.995478
       },
       {
          "name":"삼성종합동물병원",
@@ -478,7 +596,9 @@
          "phone":"051-205-1017",
          "time":"매일09:00~19:00\r\n공휴일09:00~18:00",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.091122,
+         "longitude":128.99559
       },
       {
          "name":"라온동물병원",
@@ -486,7 +606,9 @@
          "phone":"051-291-7900",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.109819,
+         "longitude":128.965808
       },
       {
          "name":"김현태동물병원",
@@ -494,7 +616,9 @@
          "phone":"051-265-7582",
          "time":"매일00:00~24:00 (24시 응급진료)\r\n평일10:00~21:00\r\n일요일10:00~16:00",
          "night":"T",
-         "homepage":"http://kangyoo15.blog.me/"
+         "homepage":"http://kangyoo15.blog.me/",
+         "latitude":35.065027,
+         "longitude":128.981296
       },
       {
          "name":"코끼리동물병원",
@@ -502,15 +626,19 @@
          "phone":"051-204-7576",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.098875,
+         "longitude":128.958406
       },
       {
          "name":"현대동물병원",
-         "location":"부산광역시 사하구 다대로 473 (제1상가동 3층, 현대아파트)",
+         "location":"부산광역시 사하구 다대로 473 (현대아파트 맘모스플라자 3층)",
          "phone":"051-246-7582",
          "time":"평일10:00~19:00",
          "night":"F",
-         "homepage":"hdpetcare.itrocks.kr"
+         "homepage":"hdpetcare.itrocks.kr",
+         "latitude":35.061591,
+         "longitude":128.977041
       },
       {
          "name":"대호동물병원",
@@ -518,7 +646,9 @@
          "phone":"051-256-1188",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.096834,
+         "longitude":129.022183
       },
       {
          "name":"대신동물병원",
@@ -526,7 +656,9 @@
          "phone":"051-254-2304",
          "time":"09:30~19:00",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.112518,
+         "longitude":129.013028
       },
       {
          "name":"길경진동물병원",
@@ -534,31 +666,39 @@
          "phone":"051-244-5504",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.111408,
+         "longitude":129.017376
       },
       {
          "name":"우리들 동물병원",
-         "location":"부산광역시 서구 토성동5가 우리들동물병원(101호, 토성동5가, 아크로폴리스)",
+         "location":"부산광역시 서구 구덕로 135, 101호 (토성동5가,아크로폴리스)",
          "phone":"051-245-7975",
          "time":"평일9:30~19:00\r\n토,공휴일9:30~17:00",
          "night":"F",
-         "homepage":"http://blog.naver.com/woori7975"
+         "homepage":"http://blog.naver.com/woori7975",
+         "latitude":35.097034,
+         "longitude":129.021511
       },
       {
          "name":"만박동물병원",
-         "location":"부산광역시 서구 까치고개로 257 (토성동1가)",
+         "location":"부산광역시 서구 까치고개로 257, 1층 (토성동1가)",
          "phone":"051-254-7744",
          "time":"평일09:30~19:00\r\n공휴일09:30~18:00\r\n토요일09:30~18:00\r\n일요일(예약 및 응급진료 )",
          "night":"F",
-         "homepage":"http://www.manbakah.com/\r\nhttp://blog.naver.com/rush7744"
+         "homepage":"http://www.manbakah.com/\r\nhttp://blog.naver.com/rush7744",
+         "latitude":35.099691,
+         "longitude":129.023994
       },
       {
          "name":"MS동물병원",
          "location":"부산광역시 연제구 과정로 354 (연산동)",
          "phone":"051-868-6631",
-         "time":"평일10:00~19:00\r\n공휴일10:00~17:00\r\n토요일10:00~17:00\r\n일요일휴무",
+         "time":"평일10:00~19:00\r\n공휴일10:00~17:00\\n토요일10:00~17:00\\n일요일휴무",
          "night":"F",
-         "homepage":"http://blog.naver.com/vet4910"
+         "homepage":"http://blog.naver.com/vet4910",
+         "latitude":35.191441,
+         "longitude":129.090137
       },
       {
          "name":"거제동물병원",
@@ -566,15 +706,19 @@
          "phone":"051-862-8668",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.181571,
+         "longitude":129.069945
       },
       {
          "name":"도그플러스동물병원(아시아드점)",
-         "location":"부산광역시 연제구 종합운동장로 7 (거제동)",
+         "location":"부산광역시 연제구 종합운동장로 7 (거제동, 홈플러스 지하 2층)",
          "phone":"051-506-8492",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.191331,
+         "longitude":129.063817
       },
       {
          "name":"라이프 동물병원",
@@ -582,7 +726,9 @@
          "phone":"051-853-7588",
          "time":"09:30~19:30 일요일 휴무",
          "night":"F",
-         "homepage":"http://www.lifevet.co.kr/"
+         "homepage":"http://www.lifevet.co.kr/",
+         "latitude":35.190912,
+         "longitude":129.080292
       },
       {
          "name":"망미동물병원",
@@ -590,7 +736,9 @@
          "phone":"051-753-7580",
          "time":"평일 9:30~17:00\r\n토,공휴일9:30~17:00\r\n점심시간 13:00 ~ 14:00",
          "night":"F",
-         "homepage":"http://blog.naver.com/mm7537580"
+         "homepage":"http://blog.naver.com/mm7537580",
+         "latitude":35.178818,
+         "longitude":129.107381
       },
       {
          "name":"부산동물메디컬센터",
@@ -598,7 +746,9 @@
          "phone":"051-868-7591",
          "time":"매일00:00~24:00",
          "night":"T",
-         "homepage":"http://www.busanamc.com/\r\nhttp://blog.naver.com/dq70orfeih"
+         "homepage":"http://www.busanamc.com/\r\nhttp://blog.naver.com/dq70orfeih",
+         "latitude":35.190855,
+         "longitude":129.077978
       },
       {
          "name":"아시아드 동물병원",
@@ -606,7 +756,9 @@
          "phone":"051-504-0079",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.191955,
+         "longitude":129.06697
       },
       {
          "name":"양지동물병원",
@@ -614,7 +766,9 @@
          "phone":"051-867-5595",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.184644,
+         "longitude":129.082708
       },
       {
          "name":"올리브 동물병원",
@@ -622,7 +776,9 @@
          "phone":"051-751-7502",
          "time":"평일10:00~19:00\r\n일요일휴무",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.188978,
+         "longitude":129.106994
       },
       {
          "name":"청조동물병원",
@@ -630,15 +786,19 @@
          "phone":"051-503-0688",
          "time":"전화문의",
          "night":"F",
-         "homepage":"high5.modoo.at"
+         "homepage":"high5.modoo.at",
+         "latitude":35.192959,
+         "longitude":129.091296
       },
       {
          "name":"쿨펫동물병원",
-         "location":"부산광역시 연제구 연수로 89 (연산동)",
+         "location":"부산광역시 연제구 연수로 89 (연산동, 이마트)",
          "phone":"051-853-0041",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.176145,
+         "longitude":129.081336
       },
       {
          "name":"토곡동물병원",
@@ -646,15 +806,19 @@
          "phone":"051-759-8669",
          "time":"평일09:30~19:00\r\n토요일09:30~17:00",
          "night":"F",
-         "homepage":"http://blog.naver.com/togok_vet"
+         "homepage":"http://blog.naver.com/togok_vet",
+         "latitude":35.187867,
+         "longitude":129.10164
       },
       {
          "name":"피정현 동물병원",
-         "location":"부산광역시 연제구 거제천로 232-1 (연산동)",
+         "location":"부산광역시 연제구 거제천로 258 (연산해수피아 1층 ,연산동)",
          "phone":"051-864-7582",
          "time":"평일10:00~19:00\r\n점심시간12:00~13:00\r\n공휴일10:00~16:00\r\n일요일휴무",
          "night":"F",
-         "homepage":"http://blog.naver.com/lony19"
+         "homepage":"http://blog.naver.com/lony19",
+         "latitude":35.191724,
+         "longitude":129.085366
       },
       {
          "name":"현대동물병원",
@@ -662,7 +826,9 @@
          "phone":"051-755-4765",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.186834,
+         "longitude":129.106972
       },
       {
          "name":"영도동물병원",
@@ -670,7 +836,9 @@
          "phone":"051-415-2566",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.091138,
+         "longitude":129.04307
       },
       {
          "name":"태종동물병원",
@@ -678,15 +846,19 @@
          "phone":"051-405-9493",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.080542,
+         "longitude":129.07062
       },
       {
-         "name":"센트럴종합동물병원",
+         "name":"센트럴동물병원",
          "location":"부산광역시 영도구 태종로78(대교동1가)",
          "phone":"051-415-2468",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.09212,
+         "longitude":129.039384
       },
       {
          "name":"천동물병원",
@@ -694,7 +866,9 @@
          "phone":"051-414-7588",
          "time":"평일09:00~19:00",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.089609,
+         "longitude":129.06766
       },
       {
          "name":"엘리자베스동물병원",
@@ -702,7 +876,9 @@
          "phone":"051-414-7686",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.09323,
+         "longitude":129.04325
       },
       {
          "name":"고동물병원",
@@ -710,7 +886,9 @@
          "phone":"051-246-0473",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.09768,
+         "longitude":129.029228
       },
       {
          "name":"희망종합동물병원",
@@ -718,7 +896,9 @@
          "phone":"051-241-0103",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.097983,
+         "longitude":129.030232
       },
       {
          "name":"피닉스동물병원",
@@ -726,7 +906,9 @@
          "phone":"051-246-7551",
          "time":"평일10:00~20:00\r\n토요일10:00~19:00\r\n일요일13:00~19:00",
          "night":"F",
-         "homepage":"http://www.dogclinic119.com/"
+         "homepage":"http://www.dogclinic119.com/",
+         "latitude":35.098077,
+         "longitude":129.032528
       },
       {
          "name":"펫가든동물병원",
@@ -734,7 +916,9 @@
          "phone":"051-462-8559",
          "time":"전화문의",
          "night":"F",
-         "homepage":"null"
+         "homepage":"null",
+         "latitude":35.096727,
+         "longitude":129.036746
       }
    ]
 }
